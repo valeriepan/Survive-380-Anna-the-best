@@ -1,5 +1,5 @@
 ---
-title: "STA380 Proposal"
+title: "Proposal"
 author: "Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang Xue"
 date: "2026-02-11"
 output: pdf_document
