@@ -1,5 +1,5 @@
 ---
-title: "Proposal"
+title: "Project Proposal: Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples"
 author: "Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang Xue"
 date: "2026-02-11"
 output: pdf_document
@@ -28,6 +28,8 @@ You can also embed plots, for example:
 plot(pressure)
 
 ```
+
+###first try mergin
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
