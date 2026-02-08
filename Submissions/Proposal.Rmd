@@ -31,7 +31,6 @@ We'll consider the following Hypothesis:
 $$
 H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
-Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings.
 ## User Input(Shiny Components)
 
 ## Reference
