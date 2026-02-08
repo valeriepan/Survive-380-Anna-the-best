@@ -31,6 +31,21 @@ We'll consider the following Hypothesis:
 $$
 H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
+To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure:
+
+\begin{itemize}
+  \item Repeatedly generate binomial samples under a specified parameter value $p'$.
+  \item For each simulated sample, perform a normal approximation test and record the resulting p-value.
+  \item Use the empirical distribution of p-values to approximate probabilities related to the test's performance.
+\end{itemize}
+
+The following outputs will be provided:
+
+\begin{itemize}
+  \item A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$.
+  \item A ggplot of the power curve
+  \item A table showing Type I error rate, Type II error rate and power of the test
+\end{itemize}
 ## User Input(Shiny Components)
 
 ## Reference
