@@ -6,7 +6,7 @@ output:
   pdf_document:
     citation_package: natbib
     latex_engine: xelatex
-fontsize: 11pt
+fontsize: 10.75pt
 geometry: margin=1in
 bibliography: references.bib
 biblio-style: unsrtnat
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Project Topic
 
-Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [One-sample z-test for a binomial proportion]
+Monte Carlo Simulation of a One-sample Z-test for Proportions of Binomially Distributed Samples.
 
 ## Simulation vs. Dataset
 
@@ -26,14 +26,14 @@ We will using pure simulation [@R-base]
 
 ## Project Detail
 
-Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings.[@wackerly2008mathematical], [@wasserman2004all]
+Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings. [@wackerly2008mathematical], [@wasserman2004all]
 
 $$
 X \sim \text{Binomial}(n, p), \qquad
 $$ We'll consider the following Hypothesis: $$
 H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
-To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure[@robertCasella2004]:
+To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure [@robertCasella2004]:
 
 \begin{itemize}
   \item Repeatedly generate binomial samples under a specified parameter value $p$.
@@ -41,21 +41,13 @@ To estimate Type I error, Type II error, and power, we will be following Monte C
   \item Use the empirical distribution of p-values to approximate probabilities related to the test's performance.
 \end{itemize}
 
-The following outputs will be provided:
+The following outputs will be shown:
 
-\begin{itemize}
-  \item A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$.
-  \item A ggplot of the power curve [@ggplot22026]
-  \item A table showing Type I error rate, Type II error rate and power of the test
-  \item For more visualization, we would provide a  ggplot of the power curve, a plot of type I and II error trade-off.
+- A table showing Type I error rate, Type II error rate and power of the test
 
-\end{itemize}
+- A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ [@ggplot22026]. Below is a plot representing what the Shiny output may show.
 
-## User Input(Shiny Components) [@shiny2025]
-Users will be able to modify the following:
-
-## User Input(Shiny Components)
-```{r example_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.height=4}
+```{r example_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.height=1.5, fig.width=3.5, fig.align="center"}
 library(ggplot2)
 n <- 15
 p <- 0.3
@@ -83,6 +75,9 @@ ggplot() +
        x = "Number of Successes",
        y = "Probability") + theme_minimal()
 ```  
+
+## User Input (Shiny Components) [@shiny2025]
+
 ### Core Simulation Controls
 1. **Simulation Sample Size**:
     - Users can set the number of Monte Carlo simulations (range: 1,000 to 10,000) via a dual slider or numeric input.
@@ -110,4 +105,4 @@ ggplot() +
 
 ## Generative AI Usage Statement
 
-Generative AI was used to help format BibTeX references, as well as providing tips on using R Markdown and GitHub (e.g. solving merge conflicts). 
+Generative AI was used to help format BibTeX references, simulate a ggplot graph for reference, as well as providing tips on using R Markdown and GitHub (e.g. solving merge conflicts). 
