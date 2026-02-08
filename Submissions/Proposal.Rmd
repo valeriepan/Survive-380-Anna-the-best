@@ -22,11 +22,11 @@ Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [O
 
 ## Simulation vs. Dataset
 
-We will using pure simulation
+We will using pure simulation [@R-base]
 
 ## Project Detail
 
-Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings.
+Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings.[@wackerly2008mathematical], [@wasserman2004all]
 
 $$
 X \sim \text{Binomial}(n, p), \qquad
@@ -45,13 +45,13 @@ The following outputs will be provided:
 
 \begin{itemize}
   \item A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$.
-  \item A ggplot of the power curve
+  \item A ggplot of the power curve [@ggplot22026]
   \item A table showing Type I error rate, Type II error rate and power of the test
   \item For more visualization, we would provide a  ggplot of the power curve, a plot of type I and II error trade-off.
 
 \end{itemize}
 
-## User Input(Shiny Components)
+## User Input(Shiny Components) [@shiny2025]
 Users will be able to modify the following:
 
 ### Core Simulation Controls
