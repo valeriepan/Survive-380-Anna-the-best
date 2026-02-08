@@ -31,3 +31,6 @@ We will using pure simulation
 [@shiny2025]
 [@R-base]
 [@ggplot22026]
+
+## Generative AI Usage Statement
+
