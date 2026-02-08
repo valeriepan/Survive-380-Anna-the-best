@@ -2,23 +2,31 @@
 title: "STA380 Project Proposal: Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples"
 author: "Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang Xue"
 date: "2026-02-11"
-output: pdf_document
+output:
+  pdf_document:
+    citation_package: natbib
+    latex_engine: xelatex
+fontsize: 11pt
+geometry: margin=1in
 bibliography: references.bib
+biblio-style: unsrtnat
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1   Project Topic
+## Project Topic
+Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [One-sample z-test for a binomial proportion]
 
-# 2   Simulation vs. Dataset
+## Simulation vs. Dataset
+We will using pure simulation
 
-# 3   Project Details
+## Project Detial
 
-# 4   User Inputs (Shiny Components)
+## User Input(Shiny Components)
 
-# References
+## Reference
 
 [@shiny2025]
 [@R-base]
