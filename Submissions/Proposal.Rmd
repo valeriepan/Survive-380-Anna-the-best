@@ -21,3 +21,5 @@ knitr::opts_chunk$set(echo = TRUE)
 # References
 
 [@shiny2025]
+[@R-base]
+[@ggplot22026]
