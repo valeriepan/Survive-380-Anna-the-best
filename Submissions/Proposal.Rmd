@@ -33,6 +33,34 @@ H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
 
 ## User Input(Shiny Components)
+```{r example_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.height=4}
+library(ggplot2)
+n <- 15
+p <- 0.3
+n_sim <- 10000
+set.seed(234)
+
+sim_results <- rbinom(n_sim, size = n, prob = p)
+sim_data <- as.data.frame(table(sim_results) / n_sim)
+colnames(sim_data) <- c("Successes", "Proportion")
+sim_data$Successes <- as.numeric(as.character(sim_data$Successes))
+
+theoretical_x <- 0:n
+theoretical_y <- dbinom(theoretical_x, size = n, prob = p)
+theoretical_data <- data.frame(x = theoretical_x, y = theoretical_y)
+
+ggplot() +
+  geom_col(data = sim_data, aes(x = Successes, y = Proportion), 
+           fill = "lightblue", color = "white", alpha = 0.7) +
+  geom_line(data = theoretical_data, aes(x = x, y = y), 
+            color = "red", linewidth = 1) +
+  geom_point(data = theoretical_data, aes(x = x, y = y), 
+             color = "red", size = 2) +
+  scale_x_continuous(breaks = 0:n) +
+  labs(title = paste("Monte Carlo Simulation (n =", n, ", p =", p, ", Samples =", n_sim, ")"),
+       x = "Number of Successes",
+       y = "Probability") +
+  ```theme_minimal()
 ### Core Simulation Controls
 - **Simulation Sample Size**:
     - Users can set the number of Monte Carlo simulations (range: 1,000 to 10,000) via a dual slider or numeric input.
