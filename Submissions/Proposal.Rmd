@@ -79,10 +79,6 @@ Users will be able to modify the following:
     - A toggle switch or dropdown box between **one-sided** and **two-sided** tests.
     - Users can select a view among a one-tailed test and two-tailed test. This shows how directional hypotheses change results and p-values without altering the sample size or effect size.
 
-## Reference
-
-[@shiny2025] [@R-base] [@ggplot22026] [@nichols2026]
-
 ## Generative AI Usage Statement
 
 Generative AI was used to help format BibTeX references, as well as providing tips on using R Markdown and GitHub (e.g. solving merge conflicts). 
