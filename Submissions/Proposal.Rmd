@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [One-sample z-test for a binomial proportion]
 
 ## Simulation vs. Dataset
+
 We will using pure simulation
 
 ## Project Detail
@@ -29,12 +30,10 @@ Hypothesis tests for binomial data are widely used in applications involving bin
 
 $$
 X \sim \text{Binomial}(n, p), \qquad
-$$
-We'll consider the following Hypothesis:
-$$
+$$ We'll consider the following Hypothesis: $$
 H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
-To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure:
+To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure[@robertCasella2004]:
 
 \begin{itemize}
   \item Repeatedly generate binomial samples under a specified parameter value $p'$.
@@ -52,13 +51,35 @@ The following outputs will be provided:
 
 \end{itemize}
 ## User Input(Shiny Components)
+### Core Simulation Controls
+- **Simulation Sample Size**:
+    - Users can set the number of Monte Carlo simulations (range: 1,000 to 10,000) via a dual slider or numeric input.
+    - Demonstrates how increasing the sample size stabilizes Type I error and power estimates, reducing simulation-based variance.
+- **Random Seed**:
+    - An integer input field to initialize the pseudo-random number generator.
+    - Ensures reproducibility in scientific research, allowing users to generate identical results for verification and ecological modeling.
+- **Number of Trials ($n$)**:
+    - A slider (range: 10–500) representing the sample size of individual units.
+    - Affects the denominator of the z-score; illustrates how larger $n$ reduces standard error and improves test sensitivity.
+- **Success Probability ($p$)**:
+    - A slider (range: 0 to 1) for the true population proportion.
+    - Allows users to explore how different effect sizes impact the statistical power of the test.
 
+### Advanced Features
+- **Significance Level ($\alpha$)**:
+    - An adjustable threshold input for statistical significance.
+    - Dynamically updates the rejection region on the plot and recalculates the estimated Type I error rate.
+- **Hypothesis Test Directionality**:
+    - A toggle switch between **one-sided** and **two-sided** tests.
+    - Shows how directional hypotheses change results and p-values without altering the sample size or effect size.
+- **Visualization Toggles**:
+    - Buttons to switch between different plot types (e.g., Binomial PMF vs. simulated sampling distribution).
+    - Provides multiple perspectives on the data, from theoretical distributions to empirical simulation results.
+- **Color Themes**:
+    - A selection menu with various color palettes (including palettes from @nichols2026).
+    - Enhances accessibility for color-blind users and allows for clear visual distinction between plot elements.
 ## Reference
 
-[@shiny2025]
-[@R-base]
-[@ggplot22026]
-[@nichols2026]
+[@shiny2025] [@R-base] [@ggplot22026] [@nichols2026]
 
 ## Generative AI Usage Statement
-
