@@ -47,3 +47,4 @@ Users will be able to modify the following:
 
 ## Generative AI Usage Statement
 
+Generative AI was used to help format BibTeX references, as well as providing tips on using R Markdown and GitHub (e.g. solving merge conflicts). 
