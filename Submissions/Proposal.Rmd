@@ -22,7 +22,15 @@ Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [O
 ## Simulation vs. Dataset
 We will using pure simulation
 
-## Project Detial
+## Project Detail
+
+$$
+X \sim \text{Binomial}(n, p), \qquad
+$$
+We'll consider the following Hypothesis:
+$$
+H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
+$$
 
 ## User Input(Shiny Components)
 
