@@ -33,7 +33,7 @@ X \sim \text{Binomial}(n, p), \qquad
 $$ We'll consider the following Hypothesis: $$
 H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
 $$
-To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure:
+To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure[@robertCasella2004]:
 
 \begin{itemize}
   \item Repeatedly generate binomial samples under a specified parameter value $p'$.
