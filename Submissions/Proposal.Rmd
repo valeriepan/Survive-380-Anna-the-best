@@ -24,6 +24,8 @@ We will using pure simulation
 
 ## Project Detail
 
+Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings.
+
 $$
 X \sim \text{Binomial}(n, p), \qquad
 $$
