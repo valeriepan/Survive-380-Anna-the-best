@@ -24,7 +24,19 @@ We will using pure simulation
 
 ## Project Detial
 
-## User Input(Shiny Components)
+## User Input (Shiny Components)
+
+Users will be able to modify the following:
+
+1. 
+2.
+3. 
+4. **Significance level ($\alpha$):** slider with range 0 to 1 
+     - Users can set the threshold for statistical significance. This will dynamically update the rejection region on the plot and recalculate the estimated Type I error rate.
+5. **Colour scheme:** dropdown box with a few options
+  - Users can select from a few colour scheme options (including colour schemes that are colour-blind friendly [@nichols2026]) and change the colour of the plot features (e.g. bars or lines).
+6. **Toggle between different graphs:** a button to switch between different graphs
+  - Users can select a view among a one-tailed test and two-tailed test. This shows how directional hypotheses can change the study results without changing sample size.
 
 ## Reference
 
