@@ -37,7 +37,7 @@ $$
 To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure:
 
 \begin{itemize}
-  \item Repeatedly generate binomial samples under a specified parameter value $p'$.
+  \item Repeatedly generate binomial samples under a specified parameter value $p$.
   \item For each simulated sample, perform a normal approximation test and record the resulting p-value.
   \item Use the empirical distribution of p-values to approximate probabilities related to the test's performance.
 \end{itemize}
