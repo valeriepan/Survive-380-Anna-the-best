@@ -23,7 +23,7 @@ Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples [O
 We will using pure simulation
 
 ## Project Detail
-
+We apply Monte Carlo simulation to study the behavior of a one-sample hypothesis test for binomially distributed data.  We focus on the normal approximation of binomial and test with the proportion. Since this test relies on asymptotic assumptions, Monte Carlo simulation provides a natural framework for evaluating its behavior. Let
 $$
 X \sim \text{Binomial}(n, p), \qquad
 $$
@@ -45,6 +45,8 @@ The following outputs will be provided:
   \item A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$.
   \item A ggplot of the power curve
   \item A table showing Type I error rate, Type II error rate and power of the test
+  \item For more visualization, we would provide a  ggplot of the power curve, a plot of type I and II error trade-off.
+
 \end{itemize}
 ## User Input(Shiny Components)
 
