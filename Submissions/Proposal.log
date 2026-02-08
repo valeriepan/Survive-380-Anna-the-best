@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.1)  8 FEB 2026 12:12
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.1)  8 FEB 2026 12:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -844,28 +844,21 @@ LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
 (Font)              scaled to size 7.66417pt on input line 96.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
 (Font)              scaled to size 5.47441pt on input line 96.
-
-Package natbib Warning: Citation `robertCasella2004' on page 1 undefined on input line 101.
-
 [1
 
-] (./Proposal.bbl [2])
-
-Package natbib Warning: There were undefined citations.
-
-[3] (./Proposal.aux)
+] (./Proposal.bbl [2]) [3] (./Proposal.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 18778 strings out of 470129
- 345492 string characters out of 5474336
- 929874 words of memory out of 5000000
- 47147 multiletter control sequences out of 15000+600000
+ 18773 strings out of 470129
+ 345432 string characters out of 5474336
+ 929597 words of memory out of 5000000
+ 47142 multiletter control sequences out of 15000+600000
  634146 words of font info for 90 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 90i,6n,114p,1005b,483s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,6n,114p,1005b,508s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on Proposal.pdf (3 pages).
