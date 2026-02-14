@@ -12,9 +12,10 @@
 # This function calculates the p-values of Monte Carlo simulated binomial samples, 
 # returns the pvalues, results of hypothesis test (in rejection), type 1 error rate, type 2 error rate and power
 
-MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, alpha = 0.05) { # provided default values
+MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, alpha = 0.05, alternative = "two.sided") { # provided default values
+
   set.seed(seed)
-  
+
   # 1. generate data 
   x <- rbinom(N, n, p_true) # draw a random sample x with n number of simulated binomial values
   
@@ -26,7 +27,13 @@ MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, a
   z <- (p_hat - p_0) / se_0 # z-test stat
   
   # 4. Calculate p-values for ALL samples (vectorized)
-  p_val <- 2 * (1 - pnorm(abs(z))) 
+  if (alternative == "two.sided") {
+    p_val <- 2 * (1 - pnorm(abs(z)))
+  } else if (alternative == "less") {
+    p_val <- pnorm(z)
+  } else if (alternative == "greater") {
+    p_val <- 1 - pnorm(z)
+  }
   
   # 5. apply "Hit or Miss" (check rejection of null hypothesis)
   rejections <- (p_val < alpha)
@@ -45,8 +52,19 @@ MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, a
     type_i_error_rate <- NULL
 
   }
-  
-  return(list(type_i_error = type_i_error_rate, power = power, 
-              type_ii_error = type_ii_error_rate, 
-              p_values = pval, rejections = rejections, ))
+
+  return(list(
+    type_i_error = type_i_error_rate, 
+    power = power, 
+    type_ii_error = type_ii_error_rate, 
+    p_values = p_val,      
+    rejections = rejections,
+    z_scores = z           
+  ))
 }
+
+res1 <- MCsim_binom(p_true = 0.5, p_0 = 0.5, alternative = "two.sided")
+print(paste("Type I Error:", res1$type_i_error))
+
+res2 <- MCsim_binom(p_true = 0.6, p_0 = 0.5, alternative = "greater")
+print(paste("Power:", res2$power))
