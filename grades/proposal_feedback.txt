@@ -1,0 +1,5 @@
+Not too sure why you specifically mentioned "allowing users to generate identical 
+results for verification and ecological modeling"; this could be applied too any type
+of statistical modelling. "Ecological" is a very weird specific niche you pointed out.
+
+Other than that, good! 1/1
