@@ -32,18 +32,21 @@ MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, a
   rejections <- (p_val < alpha)
   
   # 6. calculate error rates and power based on truth
-  if (p_true == p_0) {
+  if(p_true == p_0) {
     # H0 is True: Calculate Type I Error
     type_i_error_rate <- mean(rejections)
-    cat(sprintf("Type I Error Rate (p_true=%.2f): %.4f\n", p_true, type_i_error_rate))
-    return(list(type_i_error = type_i_error_rate, rejections = rejections))
+    power <- NULL
+    type_ii_error_rate <- NULL
     
   } else {
     # H0 is False: Calculate Power and Type II Error
     power <- mean(rejections)
     type_ii_error_rate <- 1 - power
-    cat(sprintf("Power (p_true=%.2f): %.4f\n", p_true, power))
-    cat(sprintf("Type II Error Rate:   %.4f\n", type_ii_error_rate))
-    return(list(power = power, type_ii_error = type_ii_error_rate, rejections = rejections))
+    type_i_error_rate <- NULL
+
   }
+  
+  return(list(type_i_error = type_i_error_rate, power = power, 
+              type_ii_error = type_ii_error_rate, 
+              p_values = pval, rejections = rejections, ))
 }
