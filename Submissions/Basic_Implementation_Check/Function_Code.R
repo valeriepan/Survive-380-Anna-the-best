@@ -30,9 +30,9 @@ MCsim_binom <- function(seed = 1, N = 10000, n = 100, p_true = 0.5, p_0 = 0.5, a
   if (alternative == "two.sided") {
     p_val <- 2 * (1 - pnorm(abs(z)))
   } else if (alternative == "less") {
-    p_val <- pnorm(z)
+    p_val <- pnorm(abs(z))
   } else if (alternative == "greater") {
-    p_val <- 1 - pnorm(z)
+    p_val <- 1 - pnorm(abs(z))
   }
   
   # 5. apply "Hit or Miss" (check rejection of null hypothesis)
