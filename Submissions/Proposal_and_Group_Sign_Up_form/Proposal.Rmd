@@ -1,0 +1,108 @@
+---
+title: "STA380 Project Proposal: Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples"
+author: "Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang Xue"
+date: "2026-02-11"
+output:
+  pdf_document:
+    citation_package: natbib
+    latex_engine: xelatex
+fontsize: 10.75pt
+geometry: margin=1in
+bibliography: references.bib
+biblio-style: unsrtnat
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project Topic
+
+Monte Carlo Simulation of a One-sample Z-test for Proportions of Binomially Distributed Samples.
+
+## Simulation vs. Dataset
+
+We will using pure simulation [@R-base]
+
+## Project Detail
+
+Hypothesis tests for binomial data are widely used in applications involving binary outcomes, such as quality control and clinical trials. Monte Carlo simulation allows practitioners to assess whether the normal approximation performs adequately for their specific sample size and parameter settings. [@wackerly2008mathematical], [@wasserman2004all]
+
+$$
+X \sim \text{Binomial}(n, p), \qquad
+$$ We'll consider the following Hypothesis: $$
+H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
+$$
+To estimate Type I error, Type II error, and power, we will be following Monte Carlo procedure [@robertCasella2004]:
+
+\begin{itemize}
+  \item Repeatedly generate binomial samples under a specified parameter value $p$.
+  \item For each simulated sample, perform a normal approximation test and record the resulting p-value.
+  \item Use the empirical distribution of p-values to approximate probabilities related to the test's performance.
+\end{itemize}
+
+The following outputs will be shown:
+
+- A table showing Type I error rate, Type II error rate and power of the test
+
+- A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ [@ggplot22026]. Below is a plot representing what the Shiny output may show.
+
+```{r example_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.height=1.5, fig.width=3.5, fig.align="center"}
+library(ggplot2)
+n <- 15
+p <- 0.3
+n_sim <- 10000
+set.seed(234)
+
+sim_results <- rbinom(n_sim, size = n, prob = p)
+sim_data <- as.data.frame(table(sim_results) / n_sim)
+colnames(sim_data) <- c("Successes", "Proportion")
+sim_data$Successes <- as.numeric(as.character(sim_data$Successes))
+
+theoretical_x <- 0:n
+theoretical_y <- dbinom(theoretical_x, size = n, prob = p)
+theoretical_data <- data.frame(x = theoretical_x, y = theoretical_y)
+
+ggplot() +
+  geom_col(data = sim_data, aes(x = Successes, y = Proportion), 
+           fill = "lightblue", color = "white", alpha = 0.7) +
+  geom_line(data = theoretical_data, aes(x = x, y = y), 
+            color = "red", linewidth = 1) +
+  geom_point(data = theoretical_data, aes(x = x, y = y), 
+             color = "red", size = 2) +
+  scale_x_continuous(breaks = 0:n) +
+  labs(title = paste("Monte Carlo Simulation (n =", n, ", p =", p, ", Samples =", n_sim, ")"),
+       x = "Number of Successes",
+       y = "Probability") + theme_minimal()
+```  
+
+## User Input (Shiny Components) [@shiny2025]
+
+### Core Simulation Controls
+1. **Simulation Sample Size**:
+    - Users can set the number of Monte Carlo simulations (range: 1,000 to 10,000) via a dual slider or numeric input.
+    - Demonstrates how increasing the sample size stabilizes Type I error and power estimates, reducing simulation-based variance.
+2. **Random Seed**:
+    - An integer input field to initialize the pseudo-random number generator.
+    - Ensures reproducibility in scientific research, allowing users to generate identical results for verification and ecological modeling.
+3. **Number of Trials ($n$)**:
+    - A slider (range: 10–500) representing the sample size of individual units.
+    - Affects the denominator of the z-score; illustrates how larger $n$ reduces standard error and improves test sensitivity.
+4. **Success Probability ($p$)**:
+    - A slider (range: 0 to 1) for the true population proportion.
+    - Allows users to explore how different effect sizes impact the statistical power of the test.
+
+### Advanced Features
+5. **Significance level ($\alpha$):** 
+     - Users can select from a few significance levels. 
+     - Dynamically updates the rejection region on the plot and recalculates the estimated Type I error rate.
+6. **Colour Themes:**
+    - Users can select from a few colour scheme options (including palettes from [@nichols2026]) and change the colour of the plot features (e.g. bars or lines).
+    - Enhances accessibility for color-blind users and allows for clear visual distinction between plot elements.
+7. **Hypothesis Test Directionality:**
+    - A toggle switch or dropdown box between **one-sided** and **two-sided** tests.
+    - Users can select a view among a one-tailed test and two-tailed test. This shows how directional hypotheses change results and p-values without altering the sample size or effect size.
+
+## Generative AI Usage Statement
+
+Generative AI was used to help format BibTeX references, simulate a ggplot graph for reference, as well as providing tips on using R Markdown and GitHub (e.g. solving merge conflicts). 
