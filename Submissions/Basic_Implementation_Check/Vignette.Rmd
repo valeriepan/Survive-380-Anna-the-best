@@ -18,13 +18,13 @@ knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center")
 ```
 
 ```{r setup}
-library(Survive-380-Anna-the-best)
+#library(Survive380AnnaTheBest)
 ```
 
-This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive-380-Anna-the-best` package:
+This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive380AnnaTheBest` package:
 
-- Estimate Type I error `Survive-380-Anna-the-best::mc_type1_binom`
+- Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
 
-- Estimate Type II error and power when alternative is well-define `Survive-380-Anna-the-best::mc_power_simple_binom`
+- Estimate Type II error and power when alternative is well-define `Survive380AnnaTheBest::mc_power_simple_binom`
 
-- Estimate Type II error and power curve when alternative is not well-define `Survive-380-Anna-the-best::mc_power_curve_binom`
+- Estimate Type II error and power curve when alternative is not well-define `Survive380AnnaTheBest::mc_power_curve_binom`
