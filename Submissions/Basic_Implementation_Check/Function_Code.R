@@ -38,12 +38,7 @@ mc_type1_binom <- function(N = 10^5, p_0,
   
   return(list(
     type1_hat = type1_hat,
-    mc_se = mc_se,
-    N = N,
-    p_0 = p_0,
-    sample_size = sample_size,
-    alpha = alpha,
-    alternative = alternative
+    mc_se = mc_se
   ))
 }
 
@@ -86,13 +81,7 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
     power_hat = power_hat,
     type2_hat = type2_hat,
     power_mc_se = power_mc_se,
-    type2_mc_se = type2_mc_se,
-    N = N,
-    p_0 = p_0,
-    p_1 = p_1,
-    sample_size = sample_size,
-    alpha = alpha,
-    alternative = alternative
+    type2_mc_se = type2_mc_se
   ))
   
 }
