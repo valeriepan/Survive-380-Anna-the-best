@@ -1,0 +1,18 @@
+Package: Survive380AnnaTheBest
+Type: Package
+Title: Monte Carlo Tools for Binomial Tests
+Version: 0.0.1
+Authors@R: c(
+    person()
+)
+Description: Monte Carlo simulation utilities for binomial hypothesis tests,
+    including estimates of Type I error, Type II error, and power curves.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

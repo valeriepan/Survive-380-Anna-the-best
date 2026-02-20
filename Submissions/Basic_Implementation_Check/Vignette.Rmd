@@ -6,19 +6,15 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: bibliography.bib
-notice: "@*"
+nocite: "@*"
 ---
 
-```{r setup, include=FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment  = "#>",
-  warning  = FALSE,
-  message  = FALSE,
-  fig.width  = 7,
-  fig.height = 6,
-  fig.align  = "center"
+  comment = "#>"
 )
+knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center") 
 ```
 
 ```{r setup}
