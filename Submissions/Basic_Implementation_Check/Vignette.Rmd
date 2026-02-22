@@ -90,7 +90,7 @@ type1_rate
 ```
 
 
-## Estimated Type II error and power for a specidic alternative value $p_{1}$
+## Estimated Type II error and power for a specific alternative value $p_{1}$
 
 ```{r}
 set.seed(1)
