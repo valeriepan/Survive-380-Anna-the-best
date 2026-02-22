@@ -45,7 +45,34 @@ n <- 50
 c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 ```
 
-# Estimated Type I error
+## Estimated p-value
+
+# Computing p_val
+
+```{r}
+set.seed(1)
+p_0 <- 0.3
+sample_size <- 50
+alternative <- "two_sided"
+s_obs <- 30 # s_obs: number of success observed in one data set
+
+p_value <- mc_pval_binom(
+  p_0 = p_0,
+  s_obs = s_obs,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+p_val
+```
+
+# Histogram
+
+```{r}
+# please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
+```
+
+## Estimated Type I error
 
 ```{r}
 set.seed(1)
@@ -63,13 +90,13 @@ type1_rate
 ```
 
 
-#Estimated Type II error and power for a specidic alternative value $p_{1}$
+## Estimated Type II error and power for a specific alternative value $p_{1}$
 
 ```{r}
 set.seed(1)
 p_0 <- 0.9
 p_1 <- 0.1
-sample_size <- 50
+sample_size <- 60
 alternative <- "less"
 
 power_type2 <- mc_power_simple_binom(
@@ -82,12 +109,12 @@ power_type2 <- mc_power_simple_binom(
 power_type2
 ```
 
-#Power Curve when alternative is not well-defined
+## Power Curve when alternative is not well-defined
 
 ```{r}
 set.seed(1)
 p_0 <- 0.6
-sample_size <- 50
+sample_size <- 70
 alternative <- "two_sided"
 
 power_curve <- mc_power_curve_binom(
