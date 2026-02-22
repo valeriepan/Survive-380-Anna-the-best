@@ -1,13 +1,50 @@
-# A basic version, without any functions yet
-# add some adjustable parameters when we make the function
-
 # note on parameters in the function: 
-# N: number of simulated values (Simulations)
+# N: Total simulation times
 # sample_size: total trials in binomial (Sample Size per Simulation)
 # p_0: null hypothesis
 # alpha: critical value
 # alternative: a vector of three different possible alternative
 # p_1: well-defined alternative hypothesis
+# s_obs: number of success you observed in one data set
+
+
+# This function calculates the p_value using Monte Carlo sampling
+# returns the p_value under s_obs and Monte Carlo standard error for p_value
+mc_pval_binom <- function(N = 10^5, p_0, s_obs, 
+                          sample_size, 
+                          alternative = c("greater", "less", "two_sided")){
+  alternative <- match.arg(alternative)
+  
+  # 1. standardize s_obs
+  p_hat <- s_obs / sample_size
+  z_obs <- (p_hat - p_0) / sqrt((p_0 * (1 - p_0)) / sample_size)
+  
+  # 2. simulate under H_0
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  # 3. compute z-statistic under normal approximation
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0)/sqrt((p_0 * (1 - p_0)) / sample_size)
+  
+  # 4. Estimating p_value using Monte Carlo sampling
+  pval_hat <- switch(
+    alternative,
+    greater   = (1 + sum(z >= z_obs)) / (N + 1),
+    less      = (1 + sum(z <= z_obs)) / (N + 1),
+    two_sided = (1 + sum(abs(z) >= abs(z_obs))) / (N + 1)
+  )
+  
+  # 5. Monte Carlo standard error for p_value
+  mc_se <- sqrt(pval_hat * (1 - pval_hat) / (N + 1))
+  
+  # 6. return estimated p_value and Monte Carlo standard error
+  return(list(
+    p_value = pval_hat,
+    mc_se = mc_se
+  ))
+}
+
+
 
 # This function calculates the type I error rate using Monte Carlo simulated binomial samples, 
 # returns the estimated type I error rate and Monte Carlo standard error
