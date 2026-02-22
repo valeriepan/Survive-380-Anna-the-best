@@ -1,0 +1,127 @@
+---
+title: "Monte Carlo Simulation of a Hypothesis Test Vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Monte Carlo Simulation of a Hypothesis Test Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+nocite: "@*"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center") 
+```
+
+```{r setup}
+#library(Survive380AnnaTheBest)
+```
+
+This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive380AnnaTheBest` package:
+
+- Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
+
+- Estimate Type II error and power at a specific $p_{1}$ `Survive380AnnaTheBest::mc_power_simple_binom`
+
+- Estimate power curve across a grid of $p$-value `Survive380AnnaTheBest::mc_power_curve_binom`
+
+We will produce:
+1. A summary table of Type I, Type II error and power
+2. A histogram of simulated $p$-value with a vertical line at $\alpha$
+3. A power curve plot
+
+## Quick assumption check
+
+Since we are using normal approximation to perform z-test, a common assumption is both $np_{0}$ and $n(1-p_{0})$ should be reasonably big(often $\ge 10$)
+
+```{r}
+p_0 <- 0.5
+n <- 50
+
+c(np0 = n * p_0, n1p0 = n * (1 - p_0))
+```
+
+## Estimated p-value
+
+# Computing p_val
+
+```{r}
+set.seed(1)
+p_0 <- 0.3
+sample_size <- 50
+alternative <- "two_sided"
+s_obs <- 30 # s_obs: number of success observed in one data set
+
+p_value <- mc_pval_binom(
+  p_0 = p_0,
+  s_obs = s_obs,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+p_val
+```
+
+# Histogram
+
+```{r}
+# please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
+```
+
+## Estimated Type I error
+
+```{r}
+set.seed(1)
+p_0 <- 0.5
+sample_size <- 50
+alternative <- "greater"
+
+type1_rate <- mc_type1_binom(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+type1_rate
+```
+
+
+## Estimated Type II error and power for a specific alternative value $p_{1}$
+
+```{r}
+set.seed(1)
+p_0 <- 0.9
+p_1 <- 0.1
+sample_size <- 60
+alternative <- "less"
+
+power_type2 <- mc_power_simple_binom(
+  p_0 = p_0,
+  p_1 = p_1,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+power_type2
+```
+
+## Power Curve when alternative is not well-defined
+
+```{r}
+set.seed(1)
+p_0 <- 0.6
+sample_size <- 70
+alternative <- "two_sided"
+
+power_curve <- mc_power_curve_binom(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+power_curve
+```

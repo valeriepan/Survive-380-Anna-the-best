@@ -1,0 +1,230 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage[]{natbib}
+\bibliographystyle{unsrtnat}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={STA380 Project Proposal: Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed Samples},
+  pdfauthor={Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang Xue},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{STA380 Project Proposal: Monte Carlo Simulation of a Hypothesis
+Test of Binomially Distributed Samples}
+\author{Siling Cheng, Junyi Hou, Valerie Pan, Tianhong Shen, Feiyang
+Xue}
+\date{2026-02-11}
+
+\begin{document}
+\maketitle
+
+\subsection{Project Topic}\label{project-topic}
+
+Monte Carlo Simulation of a Hypothesis Test of Binomially Distributed
+Samples {[}One-sample z-test for a binomial proportion{]}
+
+\subsection{Simulation vs.~Dataset}\label{simulation-vs.-dataset}
+
+We will using pure simulation
+
+\subsection{Project Detail}\label{project-detail}
+
+Hypothesis tests for binomial data are widely used in applications
+involving binary outcomes, such as quality control and clinical trials.
+Monte Carlo simulation allows practitioners to assess whether the normal
+approximation performs adequately for their specific sample size and
+parameter settings.
+
+\[
+X \sim \text{Binomial}(n, p), \qquad
+\] We'll consider the following Hypothesis: \[
+H_0: p = p_0 \quad \text{vs.} \quad H_a: p \neq p_0
+\] To estimate Type I error, Type II error, and power, we will be
+following Monte Carlo procedure\citep{robertCasella2004}:
+
+\begin{itemize}
+  \item Repeatedly generate binomial samples under a specified parameter value $p$.
+  \item For each simulated sample, perform a normal approximation test and record the resulting p-value.
+  \item Use the empirical distribution of p-values to approximate probabilities related to the test's performance.
+\end{itemize}
+
+The following outputs will be provided:
+
+\begin{itemize}
+  \item A histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$.
+  \item A ggplot of the power curve
+  \item A table showing Type I error rate, Type II error rate and power of the test
+  \item For more visualization, we would provide a  ggplot of the power curve, a plot of type I and II error trade-off.
+
+\end{itemize}
+
+\subsection{User Input(Shiny
+Components)}\label{user-inputshiny-components}
+
+\textless\textless\textless\textless\textless\textless\textless{} HEAD n
+\textless- 15 p \textless- 0.3 n\_sim \textless-10000 set.seed(234)
+sim\_results \textless- rbinom(n\_sim, size = n, prob = p) sim\_data
+\textless- as.data.frame(table(sim\_results) / n\_sim)
+colnames(sim\_data) \textless- c(``Successes'', ``Proportion'')
+sim\_data\(Successes <- as.numeric(as.character(sim_data\)Successes)
+theoretical\_x \textless- 0:n theoretical\_y \textless-
+dbinom(theoretical\_x, size = n, prob = p) theoretical\_data \textless-
+data.frame(x = theoretical\_x, y = theoretical\_y) ggplot() +
+geom\_col(data = sim\_data, aes(x = Successes, y = Proportion), fill =
+``lightblue'', color = ``white'', alpha = 0.7) + geom\_line(data =
+theoretical\_data, aes(x = x, y = y), color = ``red'', size = 1) +
+geom\_point(data = theoretical\_data, aes(x = x, y = y), color =
+``red'', size = 2) + scale\_x\_continuous(breaks = 0:n) + labs(title =
+paste(``Monte Carlo Simulation (n ='', n, ``, p ='', p, ``, Samples ='',
+n\_sim, ``)''), x = ``Number of Successes'', y = ``Probability'') +
+theme\_minimal()
+
+======= Users will be able to modify the following:
+
+\begin{quote}
+\begin{quote}
+\begin{quote}
+\begin{quote}
+\begin{quote}
+\begin{quote}
+\begin{quote}
+fe0f75f5d10b8605f7c6384bd799a7fd687c172e \#\#\# Core Simulation Controls
+1. \textbf{Simulation Sample Size}: - Users can set the number of Monte
+Carlo simulations (range: 1,000 to 10,000) via a dual slider or numeric
+input. - Demonstrates how increasing the sample size stabilizes Type I
+error and power estimates, reducing simulation-based variance. 2.
+\textbf{Random Seed}: - An integer input field to initialize the
+pseudo-random number generator. - Ensures reproducibility in scientific
+research, allowing users to generate identical results for verification
+and ecological modeling. 3. \textbf{Number of Trials (\(n\))}: - A
+slider (range: 10--500) representing the sample size of individual
+units. - Affects the denominator of the z-score; illustrates how larger
+\(n\) reduces standard error and improves test sensitivity. 4.
+\textbf{Success Probability (\(p\))}: - A slider (range: 0 to 1) for the
+true population proportion. - Allows users to explore how different
+effect sizes impact the statistical power of the test.
+\end{quote}
+\end{quote}
+\end{quote}
+\end{quote}
+\end{quote}
+\end{quote}
+\end{quote}
+
+\subsubsection{Advanced Features}\label{advanced-features}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  \textbf{Significance level (\(\alpha\)):}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Users can select from a few significance levels.
+  \item
+    Dynamically updates the rejection region on the plot and
+    recalculates the estimated Type I error rate.
+  \end{itemize}
+\item
+  \textbf{Colour Themes:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Users can select from a few colour scheme options (including
+    palettes from \citep{nichols2026}) and change the colour of the plot
+    features (e.g.~bars or lines).
+  \item
+    Enhances accessibility for color-blind users and allows for clear
+    visual distinction between plot elements.
+  \end{itemize}
+\item
+  \textbf{Hypothesis Test Directionality:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A toggle switch or dropdown box between \textbf{one-sided} and
+    \textbf{two-sided} tests.
+  \item
+    Users can select a view among a one-tailed test and two-tailed test.
+    This shows how directional hypotheses change results and p-values
+    without altering the sample size or effect size.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Reference}\label{reference}
+
+\citep{shiny2025} \citep{R-base} \citep{ggplot22026} \citep{nichols2026}
+
+\subsection{Generative AI Usage
+Statement}\label{generative-ai-usage-statement}
+
+Generative AI was used to help format BibTeX references, as well as
+providing tips on using R Markdown and GitHub (e.g.~solving merge
+conflicts).
+
+\bibliography{references.bib}
+
+\end{document}
