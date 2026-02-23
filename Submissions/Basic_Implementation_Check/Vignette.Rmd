@@ -126,6 +126,9 @@ power_curve <- mc_power_curve_binom(
 power_curve
 ```
 
+
+## Bibliography
+
 ## Generative AI Usage Statement
 
 Generative AI was used to debugging part of Function_Code, 
