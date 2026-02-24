@@ -21,7 +21,9 @@ knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center")
 library(Survive380AnnaTheBest)
 ```
 
-This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive380AnnaTheBest` package:
+This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via four functions from the `Survive380AnnaTheBest` package:
+
+- Calculates the p_values and standard error using Monte Carlo sampling `Survive380AnnaTheBest::mc_pval_binom`
 
 - Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
 
@@ -30,8 +32,11 @@ This vignette demonstrates how to estimate the Type I error rate, Type II error 
 - Estimate power curve across a grid of $p$-value `Survive380AnnaTheBest::mc_power_curve_binom`
 
 We will produce:
+
 1. A summary table of Type I, Type II error and power
+
 2. A histogram of simulated $p$-value with a vertical line at $\alpha$
+
 3. A power curve plot
 
 ## Quick assumption check
@@ -47,7 +52,7 @@ c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 
 ## Estimated p-value
 
-# Computing p_val
+### Computing p_val
 
 ```{r}
 set.seed(1)
@@ -66,10 +71,30 @@ p_value <- mc_pval_binom(
 p_value
 ```
 
-# Histogram
+### Histogram
 
 ```{r}
 # please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
+
+library(ggplot2)
+# we want to use p-value to make a histogram of the simulated p-values
+# adjust the variable names once the function code has been adjusted
+
+# Calculate theoretical distribution
+x_vals <- 0:n  # All possible values (0 successes to n successes)
+theoretical_probs <- dbinom(x_vals, size = n, prob = p)
+
+# Create empirical distribution from Monte Carlo samples
+empirical_counts <- table(factor(mc_samples, levels = 0:n))
+empirical_probs <- as.numeric(empirical_counts) / num_samples
+
+# 3. Create data frame for plotting
+plot_data <- data.frame(
+  x = x_vals,
+  Empirical = empirical_probs,
+  Theoretical = theoretical_probs
+)
+
 ```
 
 ## Estimated Type I error

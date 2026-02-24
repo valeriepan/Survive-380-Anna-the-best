@@ -342,20 +342,234 @@ Vignette</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#library(Survive380AnnaTheBest)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Survive380AnnaTheBest)</span></code></pre></div>
 <p>This vignette demonstrates how to estimate the Type I error rate,
 Type II error rate, and power of a hypothesis test for binomially
-distributed samples using Monte Carlo simulation, via three functions
+distributed samples using Monte Carlo simulation, via four functions
 from the <code>Survive380AnnaTheBest</code> package:</p>
 <ul>
+<li><p>Calculates the p_values and standard error using Monte Carlo
+sampling <code>Survive380AnnaTheBest::mc_pval_binom</code></p></li>
 <li><p>Estimate Type I error
 <code>Survive380AnnaTheBest::mc_type1_binom</code></p></li>
-<li><p>Estimate Type II error and power when alternative is well-define
+<li><p>Estimate Type II error and power at a specific <span class="math inline">\(p_{1}\)</span>
 <code>Survive380AnnaTheBest::mc_power_simple_binom</code></p></li>
-<li><p>Estimate Type II error and power curve when alternative is not
-well-define
+<li><p>Estimate power curve across a grid of <span class="math inline">\(p\)</span>-value
 <code>Survive380AnnaTheBest::mc_power_curve_binom</code></p></li>
 </ul>
+<p>We will produce:</p>
+<ol style="list-style-type: decimal">
+<li><p>A summary table of Type I, Type II error and power</p></li>
+<li><p>A histogram of simulated <span class="math inline">\(p\)</span>-value with a vertical line at <span class="math inline">\(\alpha\)</span></p></li>
+<li><p>A power curve plot</p></li>
+</ol>
+<div id="quick-assumption-check" class="section level2">
+<h2>Quick assumption check</h2>
+<p>Since we are using normal approximation to perform z-test, a common
+assumption is both <span class="math inline">\(np_{0}\)</span> and <span class="math inline">\(n(1-p_{0})\)</span> should be reasonably big(often
+<span class="math inline">\(\ge 10\)</span>)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">c</span>(<span class="at">np0 =</span> n <span class="sc">*</span> p_0, <span class="at">n1p0 =</span> n <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_0))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;  np0 n1p0 </span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;   25   25</span></span></code></pre></div>
+</div>
+<div id="estimated-p-value" class="section level2">
+<h2>Estimated p-value</h2>
+</div>
+<div id="computing-p_val" class="section level1">
+<h1>Computing p_val</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;two_sided&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>s_obs <span class="ot">&lt;-</span> <span class="dv">30</span> <span class="co"># s_obs: number of success observed in one data set</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">mc_pval_binom</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">s_obs =</span> s_obs,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>p_value</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; $p_value</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; [1] 9.9999e-06</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; $mc_se</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; [1] 9.99985e-06</span></span></code></pre></div>
+</div>
+<div id="histogram" class="section level1">
+<h1>Histogram</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)</span></span></code></pre></div>
+<div id="estimated-type-i-error" class="section level2">
+<h2>Estimated Type I error</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;greater&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>type1_rate <span class="ot">&lt;-</span> <span class="fu">mc_type1_binom</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>)</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>type1_rate</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; $type1_hat</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; [1] 0.05998</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; $mc_se</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; [1] 0.0007508821</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; $N</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; [1] 1e+05</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; $p_0</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; $sample_size</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; [1] 50</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; $alpha</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.05</span></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt; $alternative</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; [1] &quot;greater&quot;</span></span></code></pre></div>
+</div>
+<div id="estimated-type-ii-error-and-power-for-a-specific-alternative-value-p_1" class="section level2">
+<h2>Estimated Type II error and power for a specific alternative value
+<span class="math inline">\(p_{1}\)</span></h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.9</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>p_1 <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">60</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;less&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>power_type2 <span class="ot">&lt;-</span> <span class="fu">mc_power_simple_binom</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="at">p_1 =</span> p_1,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>)</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>power_type2</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; $power_hat</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; $type2_hat</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; $power_mc_se</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; $type2_mc_se</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; $N</span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; [1] 1e+05</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; $p_0</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; [1] 0.9</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; $p_1</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; [1] 0.1</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; $sample_size</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; [1] 60</span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt; $alpha</span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; [1] 0.05</span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt; $alternative</span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; [1] &quot;less&quot;</span></span></code></pre></div>
+</div>
+<div id="power-curve-when-alternative-is-not-well-defined" class="section level2">
+<h2>Power Curve when alternative is not well-defined</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.6</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">70</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;two_sided&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>power_curve <span class="ot">&lt;-</span> <span class="fu">mc_power_curve_binom</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>power_curve</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt;    p_true power_hat type2_hat  power_mc_se  type2_mc_se</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 1    0.30   0.99928   0.00072 8.482226e-05 8.482226e-05</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 2    0.31   0.99831   0.00169 1.298901e-04 1.298901e-04</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; 3    0.32   0.99687   0.00313 1.766410e-04 1.766410e-04</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; 4    0.33   0.99510   0.00490 2.208164e-04 2.208164e-04</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; 5    0.34   0.99164   0.00836 2.879255e-04 2.879255e-04</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; 6    0.35   0.98705   0.01295 3.575234e-04 3.575234e-04</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; 7    0.36   0.97967   0.02033 4.462812e-04 4.462812e-04</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; 8    0.37   0.96857   0.03143 5.517441e-04 5.517441e-04</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; 9    0.38   0.95355   0.04645 6.655253e-04 6.655253e-04</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; 10   0.39   0.93515   0.06485 7.787456e-04 7.787456e-04</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; 11   0.40   0.90873   0.09127 9.107128e-04 9.107128e-04</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; 12   0.41   0.87786   0.12214 1.035480e-03 1.035480e-03</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; 13   0.42   0.84069   0.15931 1.157283e-03 1.157283e-03</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; 14   0.43   0.79469   0.20531 1.277332e-03 1.277332e-03</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; 15   0.44   0.74159   0.25841 1.384320e-03 1.384320e-03</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; 16   0.45   0.68545   0.31455 1.468361e-03 1.468361e-03</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt; 17   0.46   0.62415   0.37585 1.531623e-03 1.531623e-03</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; 18   0.47   0.56012   0.43988 1.569667e-03 1.569667e-03</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; 19   0.48   0.49279   0.50721 1.580974e-03 1.580974e-03</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="co">#&gt; 20   0.49   0.42588   0.57412 1.563669e-03 1.563669e-03</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="co">#&gt; 21   0.50   0.35860   0.64140 1.516595e-03 1.516595e-03</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="co">#&gt; 22   0.51   0.29922   0.70078 1.448059e-03 1.448059e-03</span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co">#&gt; 23   0.52   0.24292   0.75708 1.356134e-03 1.356134e-03</span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt; 24   0.53   0.19338   0.80662 1.248936e-03 1.248936e-03</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co">#&gt; 25   0.54   0.14973   0.85027 1.128321e-03 1.128321e-03</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#&gt; 26   0.55   0.11613   0.88387 1.013133e-03 1.013133e-03</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt; 27   0.56   0.08941   0.91059 9.023073e-04 9.023073e-04</span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co">#&gt; 28   0.57   0.06713   0.93287 7.913505e-04 7.913505e-04</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co">#&gt; 29   0.58   0.05048   0.94952 6.923277e-04 6.923277e-04</span></span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co">#&gt; 30   0.59   0.04191   0.95809 6.336683e-04 6.336683e-04</span></span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a><span class="co">#&gt; 31   0.60   0.03839   0.96161 6.075871e-04 6.075871e-04</span></span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a><span class="co">#&gt; 32   0.61   0.03863   0.96137 6.094073e-04 6.094073e-04</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a><span class="co">#&gt; 33   0.62   0.04669   0.95331 6.671585e-04 6.671585e-04</span></span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a><span class="co">#&gt; 34   0.63   0.05892   0.94108 7.446370e-04 7.446370e-04</span></span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a><span class="co">#&gt; 35   0.64   0.07922   0.92078 8.540737e-04 8.540737e-04</span></span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a><span class="co">#&gt; 36   0.65   0.10344   0.89656 9.630170e-04 9.630170e-04</span></span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a><span class="co">#&gt; 37   0.66   0.14087   0.85913 1.100117e-03 1.100117e-03</span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a><span class="co">#&gt; 38   0.67   0.18297   0.81703 1.222669e-03 1.222669e-03</span></span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a><span class="co">#&gt; 39   0.68   0.23036   0.76964 1.331519e-03 1.331519e-03</span></span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a><span class="co">#&gt; 40   0.69   0.28971   0.71029 1.434497e-03 1.434497e-03</span></span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a><span class="co">#&gt; 41   0.70   0.35509   0.64491 1.513278e-03 1.513278e-03</span></span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a><span class="co">#&gt; 42   0.71   0.42260   0.57740 1.562080e-03 1.562080e-03</span></span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a><span class="co">#&gt; 43   0.72   0.49686   0.50314 1.581108e-03 1.581108e-03</span></span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a><span class="co">#&gt; 44   0.73   0.57182   0.42818 1.564742e-03 1.564742e-03</span></span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a><span class="co">#&gt; 45   0.74   0.64548   0.35452 1.512731e-03 1.512731e-03</span></span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a><span class="co">#&gt; 46   0.75   0.71641   0.28359 1.425366e-03 1.425366e-03</span></span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a><span class="co">#&gt; 47   0.76   0.77955   0.22045 1.310923e-03 1.310923e-03</span></span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a><span class="co">#&gt; 48   0.77   0.83217   0.16783 1.181791e-03 1.181791e-03</span></span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a><span class="co">#&gt; 49   0.78   0.87746   0.12254 1.036938e-03 1.036938e-03</span></span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a><span class="co">#&gt; 50   0.79   0.91416   0.08584 8.858414e-04 8.858414e-04</span></span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a><span class="co">#&gt; 51   0.80   0.94377   0.05623 7.284791e-04 7.284791e-04</span></span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a><span class="co">#&gt; 52   0.81   0.96618   0.03382 5.716311e-04 5.716311e-04</span></span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a><span class="co">#&gt; 53   0.82   0.97921   0.02079 4.511959e-04 4.511959e-04</span></span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a><span class="co">#&gt; 54   0.83   0.98930   0.01070 3.253538e-04 3.253538e-04</span></span>
+<span id="cb7-68"><a href="#cb7-68" tabindex="-1"></a><span class="co">#&gt; 55   0.84   0.99444   0.00556 2.351401e-04 2.351401e-04</span></span>
+<span id="cb7-69"><a href="#cb7-69" tabindex="-1"></a><span class="co">#&gt; 56   0.85   0.99735   0.00265 1.625724e-04 1.625724e-04</span></span>
+<span id="cb7-70"><a href="#cb7-70" tabindex="-1"></a><span class="co">#&gt; 57   0.86   0.99881   0.00119 1.090222e-04 1.090222e-04</span></span>
+<span id="cb7-71"><a href="#cb7-71" tabindex="-1"></a><span class="co">#&gt; 58   0.87   0.99961   0.00039 6.243780e-05 6.243780e-05</span></span>
+<span id="cb7-72"><a href="#cb7-72" tabindex="-1"></a><span class="co">#&gt; 59   0.88   0.99987   0.00013 3.605317e-05 3.605317e-05</span></span>
+<span id="cb7-73"><a href="#cb7-73" tabindex="-1"></a><span class="co">#&gt; 60   0.89   0.99998   0.00002 1.414199e-05 1.414199e-05</span></span>
+<span id="cb7-74"><a href="#cb7-74" tabindex="-1"></a><span class="co">#&gt; 61   0.90   0.99999   0.00001 9.999950e-06 9.999950e-06</span></span></code></pre></div>
+</div>
+<div id="bibliography" class="section level2">
+<h2>Bibliography</h2>
+</div>
+<div id="generative-ai-usage-statement" class="section level2">
+<h2>Generative AI Usage Statement</h2>
+<p>Generative AI was used to debugging part of Function_Code,</p>
+</div>
+</div>
 
 
 
