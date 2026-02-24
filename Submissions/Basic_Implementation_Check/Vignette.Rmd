@@ -18,7 +18,7 @@ knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center")
 ```
 
 ```{r setup}
-#library(Survive380AnnaTheBest)
+library(Survive380AnnaTheBest)
 ```
 
 This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive380AnnaTheBest` package:
@@ -63,7 +63,7 @@ p_value <- mc_pval_binom(
   alternative = alternative
 )
 
-p_val
+p_value
 ```
 
 # Histogram
