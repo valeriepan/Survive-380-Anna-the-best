@@ -1,10 +1,10 @@
-# Monte Carlo Simulation of a Hypothesis Test for Binomial Proportions (STA380)
+# Monte Carlo Simulation of a Hypothesis Test for Binomial Proportions
 
-This repository contains a Monte Carlo simulation study of the **one-sample z-test for a proportion** when data are **binomially distributed**. The goal is to explore how well the **normal approximation** performs under different settings (sample size, true proportion, significance level, and one- vs two-sided alternatives), and to visualize the resulting **p-value behavior**, **Type I error**, **Type II error**, and **power**. :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
+This repository contains a Monte Carlo simulation study of the **one-sample z-test for a proportion** when data are **binomially distributed**. The goal is to explore how well the **normal approximation** performs under different settings (sample size, true proportion, significance level, and one- vs two-sided alternatives), and to visualize the resulting **p-value behavior**, **Type I error**, **Type II error**, and **power**.
 
 ---
 
-## Project idea (what we’re studying)
+## Project idea
 
 We simulate
 \[
@@ -24,7 +24,7 @@ then convert it to a **p-value** according to the chosen alternative. Repeating 
 - the distribution of p-values under \(H_0\),
 - **Type I error** at level \(\alpha\),
 - **Type II error** under specified alternatives \(p=p_1\),
-- and **power** as a function of \(p\). :contentReference[oaicite:2]{index=2}
+- **power** as a function of \(p\). 
 
 ---
 
