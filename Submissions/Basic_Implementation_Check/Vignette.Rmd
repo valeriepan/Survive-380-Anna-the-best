@@ -224,7 +224,7 @@ library(ggplot2)
 
 ggplot(power_curve, aes(x = p_true, 
                         y = power_hat)) +
-  geom_line(color = "dodgerblue", 
+  geom_line(color = "cornflowerblue", 
             linewidth = 1.2) +
   geom_errorbar(aes(ymin = power_hat - 2*power_mc_se, 
                     ymax = power_hat + 2*power_mc_se), 
@@ -273,15 +273,19 @@ library(ggplot2)
 
 colnames(power_curve_one_sided) <- c("p_true", "power")
 alternative <- alternative_one_sided 
+alpha_level <- 0.05
 
 ggplot(data = power_curve_one_sided, aes(x = p_true, y = power)) +
-  geom_line(color = "dodgerblue", linewidth = 1.2) +
-  geom_vline(xintercept = p_0, linetype = "dashed", color = "gray50", linewidth = 1) + 
-  annotate("text", x = p_0 + 0.02, y = 0.1, label = paste("p0 =", p_0), color = "gray50", angle = 90) +
+  geom_line(color = "cornflowerblue", linewidth = 1.2) +
+  geom_vline(xintercept = p_0, linetype = "dashed", color = "coral", linewidth = 1) +    annotate("text", x = p_0 + 0.02, y = alpha_level+0.05, 
+           label = paste("p0 =", p_0), color = "coral", angle = 90) +
+  geom_hline(yintercept = alpha_level, linetype = "dashed", color = "red") +
+  annotate("text", x = p_0 + 0.02, y = alpha_level + 0.05, 
+           label = paste("Alpha =", alpha_level), color = "red", size = 3) +
   labs(
     title = "One-Tailed Power Curve for Binomial Test",
     subtitle = paste("Number of trials =", sample_size, 
-                     ", Null Proportion =", p_0, 
+                     ", Probability of success =", p_0, 
                      ", Alternative =", alternative),
     x = "True Underlying Proportion (p)",
     y = "Statistical Power"
@@ -326,12 +330,12 @@ if (nrow(achieved_target) > 0) {
 ```{r}
 library(ggplot2)
 ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
-  geom_line(color = "dodgerblue", linewidth = 1.2) +
+  geom_line(color = "cornflowerblue", linewidth = 1.2) +
   
   geom_hline(yintercept = 0.8, 
              linetype = "dashed", 
              color = "red", 
-             linewidth = 1.2) +
+             linewidth = 0.8) +
   
   annotate("text", x = min(df_power[, "SampleSize"]), 
            y = 0.82, 
