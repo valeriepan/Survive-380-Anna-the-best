@@ -1,3 +1,16 @@
+# Monte Carlo Simulation for Binomial Proportion Tests
+# Author: Valerie Pan, Tianhong Shen, Junyi Hou, Siling Cheng, Feiyang Xue
+# Course: STA 380
+# Date: 2026-02-25
+#
+# This file contains functions for:
+# - Monte Carlo p-value estimation
+# - Type I error estimation
+# - Power calculation (simple alternative)
+# - Power curve estimation (composite alternative)
+
+
+# ==============================================================================
 # note on parameters in the function: 
 # N: Total simulation times
 # sample_size: total trials in binomial (Sample Size per Simulation)
@@ -6,9 +19,13 @@
 # alternative: a vector of three different possible alternative
 # p_1: well-defined alternative hypothesis
 # s_obs: number of success you observed in one data set
+# ==============================================================================
 
 
 
+
+
+# ==============================================================================
 #' Monte Carlo p-value for a binomial z-test with normal approximation
 #'
 #' Estimate the p-value of a one-sample binomial proportion test using
@@ -33,6 +50,9 @@
 #'   \item \code{mc_se}: Monte Carlo standard error of \code{p_value}, computed as
 #'   \eqn{\sqrt{\hat p(1-\hat p)/(N+1)}}.
 #' }
+#' @details 
+#' This function calculates the p_value using Monte Carlo sampling.
+#' It returns the p_value under s_obs and Monte Carlo standard error for p_value.
 #'
 #' @examples
 #' set.seed(1)
@@ -74,11 +94,13 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
   ))
 }
 
+# ==============================================================================
 
 
-# This function calculates the p_value using Monte Carlo method
-# returns a vector of p_value(these are null p_value under H_0) and Monte Carlo standard error for p_value
 
+
+
+# ==============================================================================
 #' Generate Null p-values with Monte Carlo Simulation
 #'
 #' Simulates binomial samples under the null hypothesis
@@ -97,6 +119,11 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 #'
 #' @return A numeric vector of length \code{N} containing
 #' the simulated null p-values
+#' 
+#' @details 
+#' # This function calculates the p_value using Monte Carlo method and returns
+#' a vector of p_value(these are null p_value under H_0) and Monte Carlo 
+#' standard error for p_value.
 #' 
 #' @examples
 #' set.seed(1)
@@ -132,12 +159,13 @@ mc_pval_null <- function(N = 10^5, p_0,
   return(p_val)
 }
 
+# ==============================================================================
 
 
 
-# This function calculates the type I error rate using Monte Carlo simulated binomial samples, 
-# returns the estimated type I error rate and Monte Carlo standard error
 
+
+# ==============================================================================
 #' Monte Carlo estimate of Type I error for a binomial z-test
 #'
 #' Estimate the Type I error rate of a one-sample binomial proportion z-test
@@ -160,6 +188,11 @@ mc_pval_null <- function(N = 10^5, p_0,
 #'   \item \code{mc_se}: Monte Carlo standard error of \code{type1_hat}, computed as
 #'   \eqn{\sqrt{\hat\alpha(1-\hat\alpha)/N}}.
 #' }
+#' 
+#' @details 
+#' # This function calculates the type I error rate using Monte Carlo simulated 
+#' binomial samples, returns the estimated type I error rate and 
+#' Monte Carlo standard error.
 #'
 #' @examples
 #' set.seed(1)
@@ -198,15 +231,13 @@ mc_type1_binom <- function(N = 10^5, p_0,
   ))
 }
 
+# ==============================================================================
 
 
-# This function calculates the type II error rate and power of the test
-# using Monte Carlo simulated binomial samples, 
-# returns the estimated type II error rate, power of the test and Monte Carlo standard error for both
 
-# Notice : this function calculate type II error rate and power when alternative hypothesis is well-define(i.e. p = p_1)
-#if the alternative is not well-define, we have to compute the whole power curve !!!
 
+
+# ==============================================================================
 #' Monte Carlo power and Type II error for a simple point alternative
 #'
 #' Estimate the power and Type II error rate of a one-sample binomial proportion
@@ -232,6 +263,15 @@ mc_type1_binom <- function(N = 10^5, p_0,
 #'   \item \code{type2_mc_se}: Monte Carlo standard error for \code{type2_hat}
 #'   (same as \code{power_mc_se}).
 #' }
+#' 
+#' @details 
+#' # This function calculates the type II error rate and power of the test
+#' using Monte Carlo simulated binomial samples, returns the estimated type II 
+#' error rate, power of the test and Monte Carlo standard error for both
+#' Notice : 
+#' This function calculate type II error rate and power when alternative 
+#' hypothesis is well-define(i.e. p = p_1) if the alternative is not well-define, 
+#' we have to compute the whole power curve !!!
 #'
 #' @examples
 #' set.seed(1)
@@ -276,16 +316,13 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
   
 }
 
+# ==============================================================================
 
 
-# This function calculates the type II error rate and power of the test
-# using Monte Carlo simulated binomial samples, 
-# returns the estimated type II error rate, power of the test and Monte Carlo standard error for both
-
-# Notice : this function calculate power curve when alternative hypothesis is not well-define
-#if the alternative is well-define(i.e. p = p_1), use the function mc_power_simple_binom!!!
 
 
+
+# ==============================================================================
 #' Monte Carlo power curve for a binomial z-test
 #'
 #' Estimate the power curve and Type II error curve for a
@@ -312,6 +349,15 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
 #'   \item \code{power_mc_se}: Monte Carlo SE for \code{power_hat}.
 #'   \item \code{type2_mc_se}: Monte Carlo SE for \code{type2_hat}.
 #' }
+#' 
+#' @details 
+#' This function calculates the type II error rate and power of the test
+#' using Monte Carlo simulated binomial samples, returns the estimated type II 
+#' error rate, power of the test and Monte Carlo standard error for both
+
+#' Notice : this function calculate power curve when alternative hypothesis is 
+#' not well-define. If the alternative is well-define(i.e. p = p_1), 
+#' use the function mc_power_simple_binom!!!
 #'
 #' @examples
 #' set.seed(1)
@@ -373,7 +419,7 @@ mc_power_curve_binom <- function(N = 10^5, p_0,
   return(power_curve)
 }
 
-
+# ==============================================================================
 
 
 
