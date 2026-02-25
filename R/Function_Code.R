@@ -1,4 +1,4 @@
-#' Calculate p_value
+#' Calculate p_value under a observed data
 #' 
 #' This function calculates the p_value using Monte Carlo sampling.
 #' 
@@ -37,6 +37,42 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
     p_value = pval_hat,
     mc_se = mc_se
   ))
+}
+
+
+
+#' Calculate null p_value under H_0
+#' 
+#' This function calculates the p_value using Monte Carlo hypothesis testing
+#' 
+#' @param N Integer. Number of simulated values (Simulations). Default 10^5.
+#' @param p_0 Numeric. Null hypothesis probability.
+#' @param sample_size Integer. Total trials in binomial (Sample Size per Simulation).
+#' @param alpha Numeric. Critical value. Default 0.05.
+#' @param alternative Character. One of "greater", "less", or "two_sided".
+#' @param s_obs Integer. Number of success you observed in one data set.
+#' @return null p_value under H_0
+#' @export
+mc_pval_null <- function(N = 10^5, p_0, 
+                         sample_size, 
+                         alternative = c("greater", "less", "two_sided")) {
+  alternative <- match.arg(alternative)
+  
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0) / sqrt(p_0 * (1-p_0) / sample_size)
+  
+  if (alternative == "less") {
+    p_val <- pnorm(z, lower.tail = TRUE)
+    return(p_val)
+  }
+  if (alternative == "greater") {
+    p_val <- pnorm(z, lower.tail = FALSE)
+    return(p_val)
+  }
+  p_val <- 2 * pnorm(-abs(z))
+  return(p_val)
 }
 
 
@@ -81,6 +117,8 @@ mc_type1_binom <- function(N = 10^5, p_0,
     alternative = alternative
   ))
 }
+
+
 
 #' Calculate simple power
 #' 
@@ -136,6 +174,7 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
   ))
   
 }
+
 
 
 #' Calculate power curve

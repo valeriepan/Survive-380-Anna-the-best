@@ -23,5 +23,6 @@ RoxygenNote: 7.3.3
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2
 VignetteBuilder: knitr
