@@ -19,7 +19,7 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
   p_hat <- s_obs / sample_size
   z_obs <- (p_hat - p_0) / sqrt((p_0 * (1 - p_0)) / sample_size)
   
-  # 2. simulate under H_0
+  # 2. simulate data under H_0
   x <- rbinom(N, size = sample_size, prob = p_0)
   
   # 3. compute z-statistic under normal approximation
@@ -54,7 +54,7 @@ mc_type1_binom <- function(N = 10^5, p_0,
                            alternative = c("greater", "less", "two_sided")) { # provided default variables
   alternative <- match.arg(alternative)
   
-  # 1. simulation under H_0 : x ~ Bin(sample_size, p_0) 
+  # 1. simulation data under H_0 : x ~ Bin(sample_size, p_0) 
   x <- rbinom(N, size = sample_size, prob = p_0)
   
   # 2. compute z-statistic under normal approximation

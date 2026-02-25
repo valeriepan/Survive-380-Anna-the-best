@@ -342,20 +342,265 @@ Vignette</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#library(Survive380AnnaTheBest)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Survive380AnnaTheBest)</span></code></pre></div>
 <p>This vignette demonstrates how to estimate the Type I error rate,
 Type II error rate, and power of a hypothesis test for binomially
-distributed samples using Monte Carlo simulation, via three functions
+distributed samples using Monte Carlo simulation, via four functions
 from the <code>Survive380AnnaTheBest</code> package:</p>
 <ul>
+<li><p>Calculates the p_values and standard error using Monte Carlo
+sampling <code>Survive380AnnaTheBest::mc_pval_binom</code></p></li>
 <li><p>Estimate Type I error
 <code>Survive380AnnaTheBest::mc_type1_binom</code></p></li>
-<li><p>Estimate Type II error and power when alternative is well-define
+<li><p>Estimate Type II error and power at a specific <span class="math inline">\(p_{1}\)</span>
 <code>Survive380AnnaTheBest::mc_power_simple_binom</code></p></li>
-<li><p>Estimate Type II error and power curve when alternative is not
-well-define
+<li><p>Estimate power curve across a grid of <span class="math inline">\(p\)</span>-value
 <code>Survive380AnnaTheBest::mc_power_curve_binom</code></p></li>
 </ul>
+<p>We will produce:</p>
+<ol style="list-style-type: decimal">
+<li><p>A summary table of Type I, Type II error and power</p></li>
+<li><p>A histogram of simulated <span class="math inline">\(p\)</span>-value with a vertical line at <span class="math inline">\(\alpha\)</span></p></li>
+<li><p>A power curve plot</p></li>
+</ol>
+<div id="quick-assumption-check" class="section level2">
+<h2>Quick assumption check</h2>
+<p>Since we are using normal approximation to perform z-test, a common
+assumption is both <span class="math inline">\(np_{0}\)</span> and <span class="math inline">\(n(1-p_{0})\)</span> should be reasonably big(often
+<span class="math inline">\(\ge 10\)</span>)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">c</span>(<span class="at">np0 =</span> n <span class="sc">*</span> p_0, <span class="at">n1p0 =</span> n <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_0))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;  np0 n1p0 </span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;   25   25</span></span></code></pre></div>
+</div>
+<div id="estimated-p-value" class="section level2">
+<h2>Estimated p-value</h2>
+<div id="computing-p_val" class="section level3">
+<h3>Computing p_val</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2000</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="co"># success probability</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">15</span> <span class="co"># number of trials</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;less&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>s_obs <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># s_obs: number of success observed in one data set</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">mc_pval_binom</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">s_obs =</span> s_obs,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>p_value</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; $p_value</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; [1] 0.9415306</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; $mc_se</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; [1] 0.0007419582</span></span></code></pre></div>
+</div>
+<div id="histogram" class="section level3">
+<h3>Histogram</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co"># we want to use p-value to make a histogram of the simulated p-values</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># adjust the variable names once the function code has been adjusted</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co"># we have the p-value from the function, calculated above, add in the p-value as a line.  </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># need to simulate the graph using dbinom, number of successes vs probability</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co"># dbinom should have a seed set, which we defined earlier</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>x_vals <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>sample_size  <span class="co"># All possible values (0 successes to n successes)</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(x_vals, <span class="at">size =</span> sample_size, <span class="at">prob =</span> p_0) <span class="co"># theoretical distribution</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co"># Create data frame for plotting</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x_vals, <span class="at">px=</span> probs)</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(x, px)) <span class="sc">+</span> </span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span><span class="st">&quot;cornflowerblue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;x, number of successes&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;p(x)&quot;</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Histogram of Binomial Distribution&quot;</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;number of trials =&quot;</span>, sample_size, <span class="st">&quot;, probability of success=&quot;</span>, p_0, <span class="st">&quot;, </span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="st">&quot;number of success observed =&quot;</span>, s_obs, <span class="st">&quot;, alternative =&quot;</span>, alternative)) <span class="sc">+</span> </span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> p_value<span class="sc">$</span>p_value), <span class="at">color =</span> <span class="st">&quot;coral&quot;</span>, <span class="at">linewidth=</span><span class="dv">1</span>)<span class="sc">+</span> </span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">x =</span> p_value<span class="sc">$</span>p_value, <span class="at">y =</span> <span class="sc">+</span><span class="cn">Inf</span>, <span class="at">label =</span> <span class="fu">paste</span>(<span class="st">&quot;p-value:&quot;</span>, <span class="fu">round</span>(p_value<span class="sc">$</span>p_value, <span class="at">digits =</span> <span class="dv">4</span>)), <span class="at">vjust =</span> <span class="dv">2</span>, <span class="at">geom =</span> <span class="st">&quot;label&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># this plot works for one-tailed less; what about greater and two-sided?</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># add an if statement</span></span></code></pre></div>
+</div>
+</div>
+<div id="estimated-type-i-error" class="section level2">
+<h2>Estimated Type I error</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;greater&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>type1_rate <span class="ot">&lt;-</span> <span class="fu">mc_type1_binom</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>type1_rate</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; $type1_hat</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; [1] 0.05998</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; $mc_se</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; [1] 0.0007508821</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; $N</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; [1] 1e+05</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; $p_0</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; $sample_size</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; [1] 50</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; $alpha</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.05</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; $alternative</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; [1] &quot;greater&quot;</span></span></code></pre></div>
+</div>
+<div id="estimated-type-ii-error-and-power-for-a-specific-alternative-value-p_1" class="section level2">
+<h2>Estimated Type II error and power for a specific alternative value
+<span class="math inline">\(p_{1}\)</span></h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.9</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>p_1 <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">60</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;less&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>power_type2 <span class="ot">&lt;-</span> <span class="fu">mc_power_simple_binom</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="at">p_1 =</span> p_1,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>)</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>power_type2</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; $power_hat</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; $type2_hat</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; $power_mc_se</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; $type2_mc_se</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; $N</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; [1] 1e+05</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt; $p_0</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; [1] 0.9</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="co">#&gt; $p_1</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="co">#&gt; [1] 0.1</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co">#&gt; $sample_size</span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt; [1] 60</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#&gt; $alpha</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt; [1] 0.05</span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co">#&gt; $alternative</span></span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co">#&gt; [1] &quot;less&quot;</span></span></code></pre></div>
+</div>
+<div id="power-curve-when-alternative-is-not-well-defined" class="section level2">
+<h2>Power Curve when alternative is not well-defined</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>p_0 <span class="ot">&lt;-</span> <span class="fl">0.6</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">70</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>alternative <span class="ot">&lt;-</span> <span class="st">&quot;two_sided&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>power_curve <span class="ot">&lt;-</span> <span class="fu">mc_power_curve_binom</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">p_0 =</span> p_0,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">sample_size =</span> sample_size,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="at">alternative =</span> alternative</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>)</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>power_curve</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt;    p_true power_hat type2_hat  power_mc_se  type2_mc_se</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; 1    0.30   0.99928   0.00072 8.482226e-05 8.482226e-05</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; 2    0.31   0.99831   0.00169 1.298901e-04 1.298901e-04</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; 3    0.32   0.99687   0.00313 1.766410e-04 1.766410e-04</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; 4    0.33   0.99510   0.00490 2.208164e-04 2.208164e-04</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; 5    0.34   0.99164   0.00836 2.879255e-04 2.879255e-04</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; 6    0.35   0.98705   0.01295 3.575234e-04 3.575234e-04</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; 7    0.36   0.97967   0.02033 4.462812e-04 4.462812e-04</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; 8    0.37   0.96857   0.03143 5.517441e-04 5.517441e-04</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; 9    0.38   0.95355   0.04645 6.655253e-04 6.655253e-04</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; 10   0.39   0.93515   0.06485 7.787456e-04 7.787456e-04</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; 11   0.40   0.90873   0.09127 9.107128e-04 9.107128e-04</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt; 12   0.41   0.87786   0.12214 1.035480e-03 1.035480e-03</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt; 13   0.42   0.84069   0.15931 1.157283e-03 1.157283e-03</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; 14   0.43   0.79469   0.20531 1.277332e-03 1.277332e-03</span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; 15   0.44   0.74159   0.25841 1.384320e-03 1.384320e-03</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; 16   0.45   0.68545   0.31455 1.468361e-03 1.468361e-03</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a><span class="co">#&gt; 17   0.46   0.62415   0.37585 1.531623e-03 1.531623e-03</span></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co">#&gt; 18   0.47   0.56012   0.43988 1.569667e-03 1.569667e-03</span></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co">#&gt; 19   0.48   0.49279   0.50721 1.580974e-03 1.580974e-03</span></span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a><span class="co">#&gt; 20   0.49   0.42588   0.57412 1.563669e-03 1.563669e-03</span></span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="co">#&gt; 21   0.50   0.35860   0.64140 1.516595e-03 1.516595e-03</span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="co">#&gt; 22   0.51   0.29922   0.70078 1.448059e-03 1.448059e-03</span></span>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="co">#&gt; 23   0.52   0.24292   0.75708 1.356134e-03 1.356134e-03</span></span>
+<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a><span class="co">#&gt; 24   0.53   0.19338   0.80662 1.248936e-03 1.248936e-03</span></span>
+<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a><span class="co">#&gt; 25   0.54   0.14973   0.85027 1.128321e-03 1.128321e-03</span></span>
+<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a><span class="co">#&gt; 26   0.55   0.11613   0.88387 1.013133e-03 1.013133e-03</span></span>
+<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a><span class="co">#&gt; 27   0.56   0.08941   0.91059 9.023073e-04 9.023073e-04</span></span>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="co">#&gt; 28   0.57   0.06713   0.93287 7.913505e-04 7.913505e-04</span></span>
+<span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a><span class="co">#&gt; 29   0.58   0.05048   0.94952 6.923277e-04 6.923277e-04</span></span>
+<span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a><span class="co">#&gt; 30   0.59   0.04191   0.95809 6.336683e-04 6.336683e-04</span></span>
+<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a><span class="co">#&gt; 31   0.60   0.03839   0.96161 6.075871e-04 6.075871e-04</span></span>
+<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a><span class="co">#&gt; 32   0.61   0.03863   0.96137 6.094073e-04 6.094073e-04</span></span>
+<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a><span class="co">#&gt; 33   0.62   0.04669   0.95331 6.671585e-04 6.671585e-04</span></span>
+<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a><span class="co">#&gt; 34   0.63   0.05892   0.94108 7.446370e-04 7.446370e-04</span></span>
+<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a><span class="co">#&gt; 35   0.64   0.07922   0.92078 8.540737e-04 8.540737e-04</span></span>
+<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a><span class="co">#&gt; 36   0.65   0.10344   0.89656 9.630170e-04 9.630170e-04</span></span>
+<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a><span class="co">#&gt; 37   0.66   0.14087   0.85913 1.100117e-03 1.100117e-03</span></span>
+<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a><span class="co">#&gt; 38   0.67   0.18297   0.81703 1.222669e-03 1.222669e-03</span></span>
+<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a><span class="co">#&gt; 39   0.68   0.23036   0.76964 1.331519e-03 1.331519e-03</span></span>
+<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a><span class="co">#&gt; 40   0.69   0.28971   0.71029 1.434497e-03 1.434497e-03</span></span>
+<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a><span class="co">#&gt; 41   0.70   0.35509   0.64491 1.513278e-03 1.513278e-03</span></span>
+<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a><span class="co">#&gt; 42   0.71   0.42260   0.57740 1.562080e-03 1.562080e-03</span></span>
+<span id="cb8-56"><a href="#cb8-56" tabindex="-1"></a><span class="co">#&gt; 43   0.72   0.49686   0.50314 1.581108e-03 1.581108e-03</span></span>
+<span id="cb8-57"><a href="#cb8-57" tabindex="-1"></a><span class="co">#&gt; 44   0.73   0.57182   0.42818 1.564742e-03 1.564742e-03</span></span>
+<span id="cb8-58"><a href="#cb8-58" tabindex="-1"></a><span class="co">#&gt; 45   0.74   0.64548   0.35452 1.512731e-03 1.512731e-03</span></span>
+<span id="cb8-59"><a href="#cb8-59" tabindex="-1"></a><span class="co">#&gt; 46   0.75   0.71641   0.28359 1.425366e-03 1.425366e-03</span></span>
+<span id="cb8-60"><a href="#cb8-60" tabindex="-1"></a><span class="co">#&gt; 47   0.76   0.77955   0.22045 1.310923e-03 1.310923e-03</span></span>
+<span id="cb8-61"><a href="#cb8-61" tabindex="-1"></a><span class="co">#&gt; 48   0.77   0.83217   0.16783 1.181791e-03 1.181791e-03</span></span>
+<span id="cb8-62"><a href="#cb8-62" tabindex="-1"></a><span class="co">#&gt; 49   0.78   0.87746   0.12254 1.036938e-03 1.036938e-03</span></span>
+<span id="cb8-63"><a href="#cb8-63" tabindex="-1"></a><span class="co">#&gt; 50   0.79   0.91416   0.08584 8.858414e-04 8.858414e-04</span></span>
+<span id="cb8-64"><a href="#cb8-64" tabindex="-1"></a><span class="co">#&gt; 51   0.80   0.94377   0.05623 7.284791e-04 7.284791e-04</span></span>
+<span id="cb8-65"><a href="#cb8-65" tabindex="-1"></a><span class="co">#&gt; 52   0.81   0.96618   0.03382 5.716311e-04 5.716311e-04</span></span>
+<span id="cb8-66"><a href="#cb8-66" tabindex="-1"></a><span class="co">#&gt; 53   0.82   0.97921   0.02079 4.511959e-04 4.511959e-04</span></span>
+<span id="cb8-67"><a href="#cb8-67" tabindex="-1"></a><span class="co">#&gt; 54   0.83   0.98930   0.01070 3.253538e-04 3.253538e-04</span></span>
+<span id="cb8-68"><a href="#cb8-68" tabindex="-1"></a><span class="co">#&gt; 55   0.84   0.99444   0.00556 2.351401e-04 2.351401e-04</span></span>
+<span id="cb8-69"><a href="#cb8-69" tabindex="-1"></a><span class="co">#&gt; 56   0.85   0.99735   0.00265 1.625724e-04 1.625724e-04</span></span>
+<span id="cb8-70"><a href="#cb8-70" tabindex="-1"></a><span class="co">#&gt; 57   0.86   0.99881   0.00119 1.090222e-04 1.090222e-04</span></span>
+<span id="cb8-71"><a href="#cb8-71" tabindex="-1"></a><span class="co">#&gt; 58   0.87   0.99961   0.00039 6.243780e-05 6.243780e-05</span></span>
+<span id="cb8-72"><a href="#cb8-72" tabindex="-1"></a><span class="co">#&gt; 59   0.88   0.99987   0.00013 3.605317e-05 3.605317e-05</span></span>
+<span id="cb8-73"><a href="#cb8-73" tabindex="-1"></a><span class="co">#&gt; 60   0.89   0.99998   0.00002 1.414199e-05 1.414199e-05</span></span>
+<span id="cb8-74"><a href="#cb8-74" tabindex="-1"></a><span class="co">#&gt; 61   0.90   0.99999   0.00001 9.999950e-06 9.999950e-06</span></span>
+<span id="cb8-75"><a href="#cb8-75" tabindex="-1"></a></span>
+<span id="cb8-76"><a href="#cb8-76" tabindex="-1"></a><span class="co"># also draw the power curve here</span></span></code></pre></div>
+</div>
+<div id="bibliography" class="section level2">
+<h2>Bibliography</h2>
+</div>
+<div id="generative-ai-usage-statement" class="section level2">
+<h2>Generative AI Usage Statement</h2>
+<p>Generative AI was used to debugging part of Function_Code,</p>
+</div>
 
 
 
