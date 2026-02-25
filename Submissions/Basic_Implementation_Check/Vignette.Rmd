@@ -69,13 +69,18 @@ p_value <- mc_pval_binom(
 )
 
 p_value
+
+# once the function has been changed: 
+# we now have a vector of p-values from simulation
+# change the variable name to "p_values" to match code in ggplot below
+
 ```
 
+### Histogram
 
-### Histogram of p value
-
-```{r}
-# please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
+```{r badplot}
+# DELETE THIS R CODE BLOCK ONCE WE HAVE FIXED THE FUNCTION
+# THE GOOD PLOT IS IN THE BLOCK BELOW
 
 library(ggplot2)
 
@@ -92,7 +97,7 @@ probs <- dbinom(x_vals, size = sample_size, prob = p_0) # theoretical distributi
 # Create data frame for plotting
 plot_data <- data.frame(x = x_vals, px= probs)
 
-
+# the following plot is incorrect, the p-value line does not work since p-value is not an x-value; the line on the plot should instead be the significance threshold
 ggplot(plot_data, aes(x, px)) + 
   geom_col(fill ="cornflowerblue") +
   xlab("x, number of successes") +
@@ -104,6 +109,57 @@ ggplot(plot_data, aes(x, px)) +
 
 # this plot works for one-tailed less; what about greater and two-sided?
 # add an if statement
+```
+
+```{r goodplot}
+# HISTOGRAM OF SIMULATED P-VALUES WITH SIGNIFICANCE LEVEL ALPHA
+
+######
+# 1. simulate the p-values in a vector form so ggplot can be run 
+# take this out once function code is working 
+  N = 10^5
+
+  # 1. standardize s_obs
+  p_hat <- s_obs / sample_size
+  z_obs <- (p_hat - p_0) / sqrt((p_0 * (1 - p_0)) / sample_size)
+  
+  # 2. simulate data under H_0
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  # 3. compute z-statistic under normal approximation
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0)/sqrt((p_0 * (1 - p_0)) / sample_size)
+  
+  # 4. Estimating p_value using Monte Carlo sampling
+  p_values <- pnorm(abs(z)) # if alternative is less
+  # we get a vector of pvalues
+
+######
+# remove the above once the function code is working
+  
+library(ggplot2)
+  
+alpha <- 0.05  # significance level
+# should we put alpha as a parameter in the function? since i think we said that was something that could be controlled by the user. 
+
+rejections <- (p_values < alpha) # for checking rejection region (FYI)
+
+# NEED AN IF STATEMENT FOR DIFFERENT ALTERNATIVES
+ggplot(data.frame(p_value = p_values), aes(x = p_value)) +
+  geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) +
+  geom_vline(xintercept = alpha, color = "red", linetype = "dashed", linewidth = 1) +
+  annotate(x = alpha, y = +Inf, label = paste("α =", alpha), vjust = 2, geom = "label", size = 3, color = "red") +
+  # Add shaded rejection region
+  annotate("rect", xmin = 0, xmax = alpha, ymin = 0, ymax = Inf, alpha = 0.2, fill = "darkgoldenrod2") +
+  annotate(x = alpha/2, y = +Inf, label = paste("Rejection", "\n", "Region"), vjust = 3, geom = "label", size = 2.5, color = "darkgoldenrod2") +
+  labs(title = "Histogram of Simulated P-Values",
+       subtitle = paste("Monte Carlo Simulation of One-Sample Z-test for Proportions", "\n" ,"of Binomially Distributed Samples"),
+       caption = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n", "number of success observed =", s_obs, ", alternative =", alternative, ", \n", "proportion of p-values < α:", mean(p_values < alpha)),
+       x = "P-value",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 ```
 
@@ -291,4 +347,4 @@ ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
 
 ## Generative AI Usage Statement
 
-Generative AI was used to debugging part of Function_Code, 
+Generative AI was used to debug part of Function_Code, and assist in plot creation using ggplot2. 
