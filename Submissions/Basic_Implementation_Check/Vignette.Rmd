@@ -21,7 +21,9 @@ knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center")
 library(Survive380AnnaTheBest)
 ```
 
-This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via three functions from the `Survive380AnnaTheBest` package:
+This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via four functions from the `Survive380AnnaTheBest` package:
+
+- Calculates the p_values and standard error using Monte Carlo sampling `Survive380AnnaTheBest::mc_pval_binom`
 
 - Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
 
@@ -30,8 +32,11 @@ This vignette demonstrates how to estimate the Type I error rate, Type II error 
 - Estimate power curve across a grid of $p$-value `Survive380AnnaTheBest::mc_power_curve_binom`
 
 We will produce:
+
 1. A summary table of Type I, Type II error and power
+
 2. A histogram of simulated $p$-value with a vertical line at $\alpha$
+
 3. A power curve plot
 
 ## Quick assumption check
@@ -47,14 +52,14 @@ c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 
 ## Estimated p-value
 
-# Computing p_val
+### Computing p_val
 
 ```{r}
-set.seed(1)
-p_0 <- 0.3
-sample_size <- 50
-alternative <- "two_sided"
-s_obs <- 30 # s_obs: number of success observed in one data set
+set.seed(2000)
+p_0 <- 0.5 # success probability
+sample_size <- 15 # number of trials
+alternative <- "less"
+s_obs <- 10 # s_obs: number of success observed in one data set
 
 p_value <- mc_pval_binom(
   p_0 = p_0,
@@ -66,10 +71,39 @@ p_value <- mc_pval_binom(
 p_value
 ```
 
-# Histogram
+### Histogram
 
 ```{r}
 # please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
+
+library(ggplot2)
+
+# we want to use p-value to make a histogram of the simulated p-values
+# adjust the variable names once the function code has been adjusted
+
+# we have the p-value from the function, calculated above, add in the p-value as a line.  
+# need to simulate the graph using dbinom, number of successes vs probability
+# dbinom should have a seed set, which we defined earlier
+
+x_vals <- 0:sample_size  # All possible values (0 successes to n successes)
+probs <- dbinom(x_vals, size = sample_size, prob = p_0) # theoretical distribution
+
+# Create data frame for plotting
+plot_data <- data.frame(x = x_vals, px= probs)
+
+
+ggplot(plot_data, aes(x, px)) + 
+  geom_col(fill ="cornflowerblue") +
+  xlab("x, number of successes") +
+  ylab("p(x)") + ylim(0, 1) +
+  labs(title = "Histogram of Binomial Distribution",
+       subtitle = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n", "number of success observed =", s_obs, ", alternative =", alternative)) + 
+  geom_vline(aes(xintercept = p_value$p_value), color = "coral", linewidth=1)+ 
+  annotate(x = p_value$p_value, y = +Inf, label = paste("p-value:", round(p_value$p_value, digits = 4)), vjust = 2, geom = "label")
+
+# this plot works for one-tailed less; what about greater and two-sided?
+# add an if statement
+
 ```
 
 ## Estimated Type I error
@@ -124,6 +158,8 @@ power_curve <- mc_power_curve_binom(
 )
 
 power_curve
+
+# also draw the power curve here
 ```
 
 
