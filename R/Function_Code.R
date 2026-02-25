@@ -1,4 +1,26 @@
-#' Calculate p_value
+# Monte Carlo Simulation for Binomial Proportion Tests
+# Author: Valerie Pan, Tianhong Shen, Junyi Hou, Siling Cheng, Feiyang Xue
+# Course: STA 380
+# Date: 2026-02-25
+#
+# This file contains functions for:
+# - Monte Carlo p-value estimation
+# - Type I error estimation
+# - Power calculation (simple alternative)
+# - Power curve estimation (composite alternative)
+# ==============================================================================
+# note on parameters in the function: 
+# N: Total simulation times
+# sample_size: total trials in binomial (Sample Size per Simulation)
+# p_0: null hypothesis
+# alpha: critical value
+# alternative: a vector of three different possible alternative
+# p_1: well-defined alternative hypothesis
+# s_obs: number of success you observed in one data set
+# ==============================================================================
+
+
+#' Calculate p_value under a observed data
 #' 
 #' This function calculates the p_value using Monte Carlo sampling.
 #' 
@@ -9,6 +31,13 @@
 #' @param alternative Character. One of "greater", "less", or "two_sided".
 #' @param s_obs Integer. Number of success you observed in one data set.
 #' @return the p_value under s_obs and Monte Carlo standard error for p_value
+#' @examples
+#' set.seed(1)
+#' pvals <- mc_pval_null(10000, p_0 = 0.5,
+#'                        sample_size = 50,
+#'                        alternative = "two_sided")
+#' hist(pvals)
+
 #' @export
 mc_pval_binom <- function(N = 10^5, p_0, s_obs, 
                           sample_size, 
@@ -23,7 +52,7 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
   p_hat <- x / sample_size
   z <- (p_hat - p_0)/sqrt((p_0 * (1 - p_0)) / sample_size)
   
-
+  
   pval_hat <- switch(
     alternative,
     greater   = (1 + sum(z >= z_obs)) / (N + 1),
@@ -41,6 +70,48 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 
 
 
+# ==============================================================================
+
+#' Calculate null p_value under H_0
+#' 
+#' This function calculates the p_value using Monte Carlo hypothesis testing
+#' 
+#' @param N Integer. Number of simulated values (Simulations). Default 10^5.
+#' @param p_0 Numeric. Null hypothesis probability.
+#' @param sample_size Integer. Total trials in binomial (Sample Size per Simulation).
+#' @param alternative Character. One of "greater", "less", or "two_sided".
+#' @return A numeric vector of length \code{N} containing the simulated null p-values.
+#'@examples
+#' set.seed(1)
+#' pvals <- mc_pval_null(10000, p_0 = 0.5,
+#'                        sample_size = 50,
+#'                        alternative = "two_sided")
+#' hist(pvals)
+#' 
+#' @export
+mc_pval_null <- function(N = 10^5, p_0, 
+                         sample_size, 
+                         alternative = c("greater", "less", "two_sided")) {
+  alternative <- match.arg(alternative)
+  
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0) / sqrt(p_0 * (1-p_0) / sample_size)
+  
+  if (alternative == "less") {
+    p_val <- pnorm(z, lower.tail = TRUE)
+    return(p_val)
+  }
+  if (alternative == "greater") {
+    p_val <- pnorm(z, lower.tail = FALSE)
+    return(p_val)
+  }
+  p_val <- 2 * pnorm(-abs(z))
+  return(p_val)
+}
+# ==============================================================================
+
 #' Calculate Type I Error Rate
 #' 
 #' This function calculates the type I error rate using Monte Carlo simulated binomial samples.
@@ -51,6 +122,10 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 #' @param alpha Numeric. Critical value. Default 0.05.
 #' @param alternative Character. One of "greater", "less", or "two_sided".
 #' @return A list containing the estimated type I error rate and Monte Carlo standard error.
+#' @examples
+#' set.seed(1)
+#' mc_type1_binom(N = 20000, p_0 = 0.5, sample_size = 50, alpha = 0.05,
+#'               alternative = "two_sided")
 #' @export
 mc_type1_binom <- function(N = 10^5, p_0,
                            sample_size, alpha = 0.05, 
@@ -82,6 +157,8 @@ mc_type1_binom <- function(N = 10^5, p_0,
   ))
 }
 
+
+
 #' Calculate simple power
 #' 
 #' This function calculates the type II error rate and power of the test
@@ -97,6 +174,11 @@ mc_type1_binom <- function(N = 10^5, p_0,
 #' @param p_1 Numeric. Well-defined alternative hypothesis
 #' 
 #' @return the estimated type II error rate, power of the test and Monte Carlo standard error for both
+#' @examples
+#' set.seed(1)
+#' mc_power_simple_binom(N = 20000, p_0 = 0.5, p_1 = 0.6,
+#'                      alpha = 0.05, sample_size = 100,
+#'                      alternative = "greater")
 #' 
 #' @export
 mc_power_simple_binom <- function(N = 10^5, p_0, p_1, 
@@ -138,6 +220,7 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
 }
 
 
+
 #' Calculate power curve
 #' 
 #' This function calculates the type II error rate and power of the test
@@ -152,13 +235,18 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
 #' @param alternative Character. A vector of three different possible alternative
 #' 
 #' @return the estimated type II error rate, power of the test and Monte Carlo standard error for both
+#' @examples
+#' set.seed(1)
+#' pc <- mc_power_curve_binom(N = 5000, p_0 = 0.5, alpha = 0.05,
+#'                           sample_size = 100, alternative = "two_sided")
+#' head(pc)
 #' @export
 mc_power_curve_binom <- function(N = 10^5, p_0, 
                                  alpha = 0.05, sample_size,
                                  alternative = c("greater", "less", "two_sided")){
   
   alternative <- match.arg(alternative)
-
+  
   if (alternative == "greater") {
     p_grid <- seq(p_0, min(1, p_0 + 0.30), length.out = 31)
   } else if (alternative == "less") {
@@ -172,10 +260,10 @@ mc_power_curve_binom <- function(N = 10^5, p_0,
   probs <- rep(p_grid, each = N)
   x_vec <- rbinom(n = N * k, size = sample_size, prob = probs)
   x_mat <- matrix(x_vec, nrow = N, ncol = k)
-
+  
   p_hat <- x_mat / sample_size 
   z_mat <- (p_hat - p_0) / sqrt(p_0 * (1 - p_0) / sample_size) 
-
+  
   reject_mat <- switch(
     alternative,
     greater   = z_mat >  qnorm(1 - alpha),
@@ -199,12 +287,3 @@ mc_power_curve_binom <- function(N = 10^5, p_0,
   
   return(power_curve)
 }
-
-
-
-
-
-
-
-
-
