@@ -243,4 +243,4 @@ ggplot(power_curve, aes(x = p_true, y = power_hat)) +
 
 ## Generative AI Usage Statement
 
-Generative AI was used to debugging part of Function_Code, 
+Generative AI was used to debug part of Function_Code, and assist in plot creation using ggplot2. 
