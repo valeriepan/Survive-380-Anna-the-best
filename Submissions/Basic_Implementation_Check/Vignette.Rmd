@@ -55,11 +55,11 @@ c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 ### Computing p_val
 
 ```{r}
-set.seed(1)
-p_0 <- 0.3
-sample_size <- 50
-alternative <- "two_sided"
-s_obs <- 30 # s_obs: number of success observed in one data set
+set.seed(2000)
+p_0 <- 0.5 # success probability
+sample_size <- 15 # number of trials
+alternative <- "less"
+s_obs <- 10 # s_obs: number of success observed in one data set
 
 p_value <- mc_pval_binom(
   p_0 = p_0,
@@ -77,23 +77,32 @@ p_value
 # please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
 
 library(ggplot2)
+
 # we want to use p-value to make a histogram of the simulated p-values
 # adjust the variable names once the function code has been adjusted
 
-# Calculate theoretical distribution
-x_vals <- 0:n  # All possible values (0 successes to n successes)
-theoretical_probs <- dbinom(x_vals, size = n, prob = p)
+# we have the p-value from the function, calculated above, add in the p-value as a line.  
+# need to simulate the graph using dbinom, number of successes vs probability
+# dbinom should have a seed set, which we defined earlier
 
-# Create empirical distribution from Monte Carlo samples
-empirical_counts <- table(factor(mc_samples, levels = 0:n))
-empirical_probs <- as.numeric(empirical_counts) / num_samples
+x_vals <- 0:sample_size  # All possible values (0 successes to n successes)
+probs <- dbinom(x_vals, size = sample_size, prob = p_0) # theoretical distribution
 
-# 3. Create data frame for plotting
-plot_data <- data.frame(
-  x = x_vals,
-  Empirical = empirical_probs,
-  Theoretical = theoretical_probs
-)
+# Create data frame for plotting
+plot_data <- data.frame(x = x_vals, px= probs)
+
+
+ggplot(plot_data, aes(x, px)) + 
+  geom_col(fill ="cornflowerblue") +
+  xlab("x, number of successes") +
+  ylab("p(x)") + ylim(0, 1) +
+  labs(title = "Histogram of Binomial Distribution",
+       subtitle = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n", "number of success observed =", s_obs, ", alternative =", alternative)) + 
+  geom_vline(aes(xintercept = p_value$p_value), color = "coral", linewidth=1)+ 
+  annotate(x = p_value$p_value, y = +Inf, label = paste("p-value:", round(p_value$p_value, digits = 4)), vjust = 2, geom = "label")
+
+# this plot works for one-tailed less; what about greater and two-sided?
+# add an if statement
 
 ```
 
@@ -149,6 +158,8 @@ power_curve <- mc_power_curve_binom(
 )
 
 power_curve
+
+# also draw the power curve here
 ```
 
 
