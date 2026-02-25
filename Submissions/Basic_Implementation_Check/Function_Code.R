@@ -76,6 +76,37 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 
 
 
+# This function calculates the p_value using Monte Carlo method
+# returns a vector of p_value(these are null p_value under H_0) and Monte Carlo standard error for p_value
+mc_pval_null <- function(N = 10^5, p_0, 
+                         sample_size, 
+                         alternative = c("greater", "less", "two_sided")) {
+  alternative <- match.arg(alternative)
+  
+  # Simulate datasets under H0
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  # Z-statistic under normal approximation
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0) / sqrt(p_0 * (1-p_0) / sample_size)
+  
+  #compute p_value under each alternative
+  if (alternative == "less") {
+    p_val <- pnorm(z, lower.tail = TRUE)
+    return(p_val)
+  }
+  if (alternative == "greater") {
+    p_val <- pnorm(z, lower.tail = FALSE)
+    return(p_val)
+  }
+  # two_sided
+  p_val <- 2 * pnorm(-abs(z))
+  return(p_val)
+}
+
+
+
+
 # This function calculates the type I error rate using Monte Carlo simulated binomial samples, 
 # returns the estimated type I error rate and Monte Carlo standard error
 

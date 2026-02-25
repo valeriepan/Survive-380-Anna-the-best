@@ -5,9 +5,9 @@ Version: 0.0.1
 Authors@R: c(
     person("Tianhong", "Shen", email = "tianhong.shen@mail.utoronto.ca",
            role = c("aut", "cre")),
-    person("TeammateFirst", "TeammateLast", email = "teammate1@email.com",
+    person("Valerie", "Pan", email = "valerie.pan@mail.utoronto.ca",
            role = "aut"),
-    person("TeammateFirst", "TeammateLast", email = "teammate2@email.com",
+    person("Siling", "Cheng", email = "siling.cheng@mail.utoronto.ca",
            role = "aut"),
     person("TeammateFirst", "TeammateLast", email = "teammate3@email.com",
            role = "aut"),
@@ -19,9 +19,10 @@ Description: Monte Carlo simulation utilities for binomial hypothesis tests,
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2
 VignetteBuilder: knitr
