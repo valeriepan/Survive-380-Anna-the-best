@@ -2,7 +2,7 @@
 % Please edit documentation in R/Function_Code.R
 \name{mc_pval_binom}
 \alias{mc_pval_binom}
-\title{Calculate p_value}
+\title{Calculate p_value under a observed data}
 \usage{
 mc_pval_binom(
   N = 10^5,
@@ -30,4 +30,11 @@ the p_value under s_obs and Monte Carlo standard error for p_value
 }
 \description{
 This function calculates the p_value using Monte Carlo sampling.
+}
+\examples{
+set.seed(1)
+pvals <- mc_pval_null(10000, p_0 = 0.5,
+                       sample_size = 50,
+                       alternative = "two_sided")
+hist(pvals)
 }

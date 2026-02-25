@@ -32,3 +32,9 @@ using Monte Carlo simulated binomial samples,
 Notice : this function calculate power curve when alternative hypothesis is not well-define
 if the alternative is well-define(i.e. p = p_1), use the function mc_power_simple_binom!!!
 }
+\examples{
+set.seed(1)
+pc <- mc_power_curve_binom(N = 5000, p_0 = 0.5, alpha = 0.05,
+                          sample_size = 100, alternative = "two_sided")
+head(pc)
+}

@@ -3,4 +3,5 @@
 export(mc_power_curve_binom)
 export(mc_power_simple_binom)
 export(mc_pval_binom)
+export(mc_pval_null)
 export(mc_type1_binom)

@@ -35,3 +35,10 @@ using Monte Carlo simulated binomial samples.
 Notice : this function calculate type II error rate and power when alternative hypothesis is well-define(i.e. p = p_1)
 if the alternative is not well-define, we have to compute the whole power curve !!!
 }
+\examples{
+set.seed(1)
+mc_power_simple_binom(N = 20000, p_0 = 0.5, p_1 = 0.6,
+                     alpha = 0.05, sample_size = 100,
+                     alternative = "greater")
+
+}
