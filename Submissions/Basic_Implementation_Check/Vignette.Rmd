@@ -52,14 +52,14 @@ c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 
 ## Estimated p-value
 
-### Computing p_val
+### Computing p_val under a obervation
 
 ```{r}
-set.seed(2000)
+set.seed(1)
 p_0 <- 0.5 # success probability
-sample_size <- 15 # number of trials
+sample_size <- 50 # number of trials
 alternative <- "less"
-s_obs <- 10 # s_obs: number of success observed in one data set
+s_obs <- 20 # s_obs: number of success observed in one data set
 
 p_value <- mc_pval_binom(
   p_0 = p_0,
@@ -69,74 +69,25 @@ p_value <- mc_pval_binom(
 )
 
 p_value
-
-# once the function has been changed: 
-# we now have a vector of p-values from simulation
-# change the variable name to "p_values" to match code in ggplot below
-
 ```
 
 ### Histogram
 
-```{r badplot}
-# DELETE THIS R CODE BLOCK ONCE WE HAVE FIXED THE FUNCTION
-# THE GOOD PLOT IS IN THE BLOCK BELOW
+```{r}
+# following code used to compute null p_value under H_0
+p_0 <- 0.3
+sample_size <- 60
+alternative <- "two_sided"
 
-library(ggplot2)
+p_values <- mc_pval_null(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
 
-# we want to use p-value to make a histogram of the simulated p-values
-# adjust the variable names once the function code has been adjusted
+p_values
 
-# we have the p-value from the function, calculated above, add in the p-value as a line.  
-# need to simulate the graph using dbinom, number of successes vs probability
-# dbinom should have a seed set, which we defined earlier
 
-x_vals <- 0:sample_size  # All possible values (0 successes to n successes)
-probs <- dbinom(x_vals, size = sample_size, prob = p_0) # theoretical distribution
-
-# Create data frame for plotting
-plot_data <- data.frame(x = x_vals, px= probs)
-
-# the following plot is incorrect, the p-value line does not work since p-value is not an x-value; the line on the plot should instead be the significance threshold
-ggplot(plot_data, aes(x, px)) + 
-  geom_col(fill ="cornflowerblue") +
-  xlab("x, number of successes") +
-  ylab("p(x)") + ylim(0, 1) +
-  labs(title = "Histogram of Binomial Distribution",
-       subtitle = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n", "number of success observed =", s_obs, ", alternative =", alternative)) + 
-  geom_vline(aes(xintercept = p_value$p_value), color = "coral", linewidth=1)+ 
-  annotate(x = p_value$p_value, y = +Inf, label = paste("p-value:", round(p_value$p_value, digits = 4)), vjust = 2, geom = "label")
-
-# this plot works for one-tailed less; what about greater and two-sided?
-# add an if statement
-```
-
-```{r goodplot}
-# HISTOGRAM OF SIMULATED P-VALUES WITH SIGNIFICANCE LEVEL ALPHA
-
-######
-# 1. simulate the p-values in a vector form so ggplot can be run 
-# take this out once function code is working 
-  N = 10^5
-
-  # 1. standardize s_obs
-  p_hat <- s_obs / sample_size
-  z_obs <- (p_hat - p_0) / sqrt((p_0 * (1 - p_0)) / sample_size)
-  
-  # 2. simulate data under H_0
-  x <- rbinom(N, size = sample_size, prob = p_0)
-  
-  # 3. compute z-statistic under normal approximation
-  p_hat <- x / sample_size
-  z <- (p_hat - p_0)/sqrt((p_0 * (1 - p_0)) / sample_size)
-  
-  # 4. Estimating p_value using Monte Carlo sampling
-  p_values <- pnorm(abs(z)) # if alternative is less
-  # we get a vector of pvalues
-
-######
-# remove the above once the function code is working
-  
 library(ggplot2)
   
 alpha <- 0.05  # significance level
@@ -347,6 +298,7 @@ ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
   scale_y_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1)) +
   theme_minimal()
 ```
+
 ## Bibliography
 
 ## Generative AI Usage Statement
