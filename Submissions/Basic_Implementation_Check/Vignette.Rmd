@@ -44,7 +44,7 @@ We will produce:
 
 ## Quick assumption check
 
-Since we are using normal approximation to perform z-test, a common assumption is both $np_{0}$ and $n(1-p_{0})$ should be reasonably big(often $\ge 10$)
+Since we are using normal approximation to perform z-test, a common assumption is both $np_{0}$ and $n(1-p_{0})$ should be reasonably big ($\ge 10$)
 
 ```{r}
 p_0 <- 0.5
@@ -75,14 +75,14 @@ p_value$p_value
 p_value$mc_se
 ```
 
-### Histogram
+### Histogram of null $p$-value under $H_{0}$
 
 ```{r}
 # following code used to compute null p_value under H_0
 set.seed(1)
 p_0 <- 0.3
 sample_size <- 60
-alternative <- "two_sided"
+alternative <- "less"
 
 p_values <- mc_pval_null(
   p_0 = p_0,
@@ -105,7 +105,7 @@ ggplot(data.frame(p_value = p_values), aes(x = p_value)) +
   annotate(x = alpha/2, y = +Inf, label = paste("Rejection", "\n", "Region"), vjust = 3, geom = "label", size = 2.5, color = "darkgoldenrod2") +
   labs(title = "Histogram of Simulated P-Values",
        subtitle = paste("Monte Carlo Simulation of One-Sample Z-test for Proportions", "\n" ,"of Binomially Distributed Samples"),
-       caption = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n", "number of success observed =", s_obs, ", alternative =", alternative, ", \n", "proportion of p-values < α:", mean(p_values < alpha)),
+       caption = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n",  ", alternative =", alternative, ", \n", "proportion of p-values < α:", mean(p_values < alpha)),
        x = "P-value",
        y = "Frequency") +
   theme_minimal() +
@@ -132,7 +132,6 @@ type1_rate <- mc_type1_binom(
 type1_rate$type1_hat
 type1_rate$mc_se
 ```
-
 
 ## Estimated Type II error and power for a specific alternative value $p_{1}$
 
@@ -174,6 +173,7 @@ power_curve
 ```
 
 ### Plot of power curve (two sided)
+
 ```{r}
 ggplot(power_curve, aes(x = p_true, 
                         y = power_hat)) +
@@ -308,16 +308,18 @@ ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
 ## Summary table
 
 ```{r}
-summary_tbl <- data.frame(
+summary_tab <- data.frame(
   Quantity = c("Type I error", "Power", "Type II error"),
   Estimate = c(type1_rate$type1_hat, power_type2$power_hat, power_type2$type2_hat),
   MC_SE    = c(type1_rate$mc_se, power_type2$power_mc_se, power_type2$type2_mc_se)
 )
-summary_tbl
+summary_tab
 ```
-
-## Bibliography
 
 ## Generative AI Usage Statement
 
-Generative AI was used to debug part of Function_Code, and assist in plot creation using ggplot2. 
+Generative AI was used to debug part of Function_Code, assist in plot creation using ggplot2, and help to build up Bibliography. 
+
+## Bibliography
+
+
