@@ -19,6 +19,7 @@ knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center")
 
 ```{r setup}
 library(Survive380AnnaTheBest)
+library(ggplot2)
 ```
 
 This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via four functions from the `Survive380AnnaTheBest` package:
@@ -52,7 +53,7 @@ c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 
 ## Estimated p-value
 
-### Computing p_val under a obervation
+### Computing p_val under a observation
 
 ```{r}
 set.seed(1)
@@ -68,16 +69,46 @@ p_value <- mc_pval_binom(
   alternative = alternative
 )
 
-p_value
+p_value$p_value
+p_value$mc_se
 ```
 
 ### Histogram
 
 ```{r}
 # following code used to compute null p_value under H_0
+set.seed(1)
 p_0 <- 0.3
 sample_size <- 60
 alternative <- "two_sided"
+
+#this is the function code please delete the function code after updating R package
+mc_pval_null <- function(N = 10^5, p_0, 
+                         sample_size, 
+                         alternative = c("greater", "less", "two_sided")) {
+  alternative <- match.arg(alternative)
+  
+  # Simulate datasets under H0
+  x <- rbinom(N, size = sample_size, prob = p_0)
+  
+  # Z-statistic under normal approximation
+  p_hat <- x / sample_size
+  z <- (p_hat - p_0) / sqrt(p_0 * (1-p_0) / sample_size)
+  
+  #compute p_value under each alternative
+  if (alternative == "less") {
+    p_val <- pnorm(z, lower.tail = TRUE)
+    return(p_val)
+  }
+  if (alternative == "greater") {
+    p_val <- pnorm(z, lower.tail = FALSE)
+    return(p_val)
+  }
+  # two_sided
+  p_val <- 2 * pnorm(-abs(z))
+  return(p_val)
+}
+
 
 p_values <- mc_pval_null(
   p_0 = p_0,
@@ -85,11 +116,6 @@ p_values <- mc_pval_null(
   alternative = alternative
 )
 
-p_values
-
-
-library(ggplot2)
-  
 alpha <- 0.05  # significance level
 # should we put alpha as a parameter in the function? since i think we said that was something that could be controlled by the user. 
 
@@ -129,7 +155,8 @@ type1_rate <- mc_type1_binom(
   alternative = alternative
 )
 
-type1_rate
+type1_rate$type1_hat
+type1_rate$mc_se
 ```
 
 
@@ -137,8 +164,8 @@ type1_rate
 
 ```{r}
 set.seed(1)
-p_0 <- 0.9
-p_1 <- 0.1
+p_0 <- 0.6
+p_1 <- 0.4
 sample_size <- 60
 alternative <- "less"
 
@@ -149,7 +176,10 @@ power_type2 <- mc_power_simple_binom(
   alternative = alternative
 )
 
-power_type2
+power_type2$power_hat
+power_type2$type2_hat
+power_type2$power_mc_se
+power_type2$type2_mc_se
 ```
 
 ### Power Curve when alternative is not well-defined
@@ -169,16 +199,15 @@ power_curve <- mc_power_curve_binom(
 power_curve
 ```
 
-### draw the plot of power curve  (two sided)
+### Plot of power curve (two sided)
 ```{r}
-library(ggplot2)
-
 ggplot(power_curve, aes(x = p_true, 
                         y = power_hat)) +
   geom_line(color = "cornflowerblue", 
             linewidth = 1.2) +
-  geom_errorbar(aes(ymin = power_hat - 2*power_mc_se, 
-                    ymax = power_hat + 2*power_mc_se), 
+geom_errorbar(aes(
+  ymin = pmax(0, power_hat - 2 * power_mc_se),
+  ymax = pmin(1, power_hat + 2 * power_mc_se)), 
                 width = 0.01, 
                 color = "grey50", 
                 alpha = 0.5) +
@@ -190,7 +219,7 @@ ggplot(power_curve, aes(x = p_true,
            hjust = 0, 
            size = 3) +
   labs(title = "Power Curve of Binomial Test",
-       subtitle = paste("Numbers of trails =", sample_size, 
+       subtitle = paste("Numbers of trials =", sample_size, 
                         ", Probability of success =", p_0, 
                         ",Alternative =", alternative),
        x = "True Probability (p)", 
@@ -217,29 +246,33 @@ power_curve_one_sided <- mc_power_curve_binom(
 power_curve_one_sided
 ```
 
-### draw the plot of power curve  (greater)
+### Plot of power curve (greater)
 
 ```{r}
-library(ggplot2)
-
-colnames(power_curve_one_sided) <- c("p_true", "power")
-alternative <- alternative_one_sided 
 alpha_level <- 0.05
+alternative <- alternative_one_sided
 
-ggplot(data = power_curve_one_sided, aes(x = p_true, y = power)) +
-  geom_line(color = "cornflowerblue", linewidth = 1.2) +
-  geom_vline(xintercept = p_0, linetype = "dashed", color = "coral", linewidth = 1) +    annotate("text", x = p_0 + 0.02, y = alpha_level+0.05, 
-           label = paste("p0 =", p_0), color = "coral", angle = 90) +
-  geom_hline(yintercept = alpha_level, linetype = "dashed", color = "red") +
-  annotate("text", x = p_0 + 0.02, y = alpha_level + 0.05, 
-           label = paste("Alpha =", alpha_level), color = "red", size = 3) +
+ggplot(power_curve_one_sided, aes(x = p_true, y = power_hat)) +
+  geom_line(linewidth = 1.2) +
+  geom_errorbar(
+    aes(
+      ymin = pmax(0, power_hat - 2 * power_mc_se),
+      ymax = pmin(1, power_hat + 2 * power_mc_se)
+    ),
+    width = 0.01,
+    alpha = 0.5
+  ) +
+  geom_vline(xintercept = p_0, linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = alpha_level, linetype = "dashed", linewidth = 0.8) +
   labs(
     title = "One-Tailed Power Curve for Binomial Test",
-    subtitle = paste("Number of trials =", sample_size, 
-                     ", Probability of success =", p_0, 
-                     ", Alternative =", alternative),
+    subtitle = paste(
+      "Number of trials =", sample_size,
+      ", p0 =", p_0,
+      ", alternative =", alternative
+    ),
     x = "True Underlying Proportion (p)",
-    y = "Statistical Power"
+    y = "Power"
   ) +
   theme_minimal()
 ```
@@ -279,7 +312,6 @@ if (nrow(achieved_target) > 0) {
 ### Plot of Power vs. Sample Size Curve
 
 ```{r}
-library(ggplot2)
 ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
   geom_line(color = "cornflowerblue", linewidth = 1.2) +
   
@@ -297,6 +329,17 @@ ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
        y = "Statistical Power") +
   scale_y_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1)) +
   theme_minimal()
+```
+
+## Summary table
+
+```{r}
+summary_tbl <- data.frame(
+  Quantity = c("Type I error", "Power", "Type II error"),
+  Estimate = c(type1_rate$type1_hat, power_type2$power_hat, power_type2$type2_hat),
+  MC_SE    = c(type1_rate$mc_se, power_type2$power_mc_se, power_type2$type2_mc_se)
+)
+summary_tbl
 ```
 
 ## Bibliography
