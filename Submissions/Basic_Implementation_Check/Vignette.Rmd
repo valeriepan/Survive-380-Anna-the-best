@@ -156,7 +156,7 @@ power_type2$power_mc_se
 power_type2$type2_mc_se
 ```
 
-### Power Curve when alternative is not well-defined
+## Power Curve when alternative is not well-defined
 
 ```{r}
 set.seed(1)
@@ -251,7 +251,7 @@ ggplot(power_curve_one_sided, aes(x = p_true, y = power_hat)) +
   theme_minimal()
 ```
 
-### Power vs. Sample Size Curve
+## Power vs. Sample Size Curve
 
 ```{r}
 #This indicates the sample size required to achieve the desired test capability. Here,   we use 80% as an example.
