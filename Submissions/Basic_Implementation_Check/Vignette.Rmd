@@ -24,7 +24,9 @@ library(ggplot2)
 
 This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via four functions from the `Survive380AnnaTheBest` package:
 
-- Calculates the p_values and standard error using Monte Carlo sampling `Survive380AnnaTheBest::mc_pval_binom`
+- Calculates the p_values under observed data and standard error using Monte Carlo sampling `Survive380AnnaTheBest::mc_pval_binom`
+
+- Calculates the null p_value under null hypothesis `Survive380AnnaTheBest::mc_pval_null`
 
 - Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
 
@@ -81,34 +83,6 @@ set.seed(1)
 p_0 <- 0.3
 sample_size <- 60
 alternative <- "two_sided"
-
-#this is the function code please delete the function code after updating R package
-mc_pval_null <- function(N = 10^5, p_0, 
-                         sample_size, 
-                         alternative = c("greater", "less", "two_sided")) {
-  alternative <- match.arg(alternative)
-  
-  # Simulate datasets under H0
-  x <- rbinom(N, size = sample_size, prob = p_0)
-  
-  # Z-statistic under normal approximation
-  p_hat <- x / sample_size
-  z <- (p_hat - p_0) / sqrt(p_0 * (1-p_0) / sample_size)
-  
-  #compute p_value under each alternative
-  if (alternative == "less") {
-    p_val <- pnorm(z, lower.tail = TRUE)
-    return(p_val)
-  }
-  if (alternative == "greater") {
-    p_val <- pnorm(z, lower.tail = FALSE)
-    return(p_val)
-  }
-  # two_sided
-  p_val <- 2 * pnorm(-abs(z))
-  return(p_val)
-}
-
 
 p_values <- mc_pval_null(
   p_0 = p_0,
