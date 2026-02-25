@@ -71,7 +71,8 @@ p_value <- mc_pval_binom(
 p_value
 ```
 
-### Histogram
+
+### Histogram of p value
 
 ```{r}
 # please add up the code to show a histogram of simulated p-values, with a vertical line indicating the chosen significance level $\alpha$ (might using ggplot2 to do so)
@@ -105,6 +106,7 @@ ggplot(plot_data, aes(x, px)) +
 # add an if statement
 
 ```
+
 
 ## Estimated Type I error
 
@@ -143,7 +145,7 @@ power_type2 <- mc_power_simple_binom(
 power_type2
 ```
 
-## Power Curve when alternative is not well-defined
+### Power Curve when alternative is not well-defined
 
 ```{r}
 set.seed(1)
@@ -158,8 +160,26 @@ power_curve <- mc_power_curve_binom(
 )
 
 power_curve
+```
 
-# also draw the power curve here
+### draw the plot of power curve 
+```{r}
+library(ggplot2)
+ggplot(power_curve, aes(x = p_true, y = power_hat)) +
+  geom_line(color = "dodgerblue", linewidth = 1.2) +
+  geom_point(color = "dodgerblue", size = 2) +
+  geom_errorbar(aes(ymin = power_hat - 2*power_mc_se, 
+                    ymax = power_hat + 2*power_mc_se), 
+                width = 0.01, color = "grey50", alpha = 0.5) +
+  geom_hline(yintercept = 0.05, linetype = "dashed", color = "red") +
+  annotate("text", x = min(power_curve$p_true), y = 0.08, 
+           label = "Significance Level (0.05)", color = "red", hjust = 0, size = 3) +
+  labs(title = "Power Curve of Binomial Test",
+       subtitle = paste("Numbers of trails =", sample_size, ", Probability of success =", p_0, ",Alternative =", alternative),
+       x = "True Probability (p)",
+       y = "Power (Probability of Rejecting H0)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
 ```
 
 
