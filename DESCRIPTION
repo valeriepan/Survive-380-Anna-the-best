@@ -9,7 +9,7 @@ Authors@R: c(
            role = "aut"),
     person("Siling", "Cheng", email = "siling.cheng@mail.utoronto.ca",
            role = "aut"),
-    person("TeammateFirst", "TeammateLast", email = "teammate3@email.com",
+    person("Feiyang", "Xue", email = "feiyang.xue@mail.utoronto.ca",
            role = "aut"),
     person("TeammateFirst", "TeammateLast", email = "teammate4@email.com",
            role = "aut")
