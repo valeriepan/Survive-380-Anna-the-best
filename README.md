@@ -11,6 +11,7 @@ We simulate $X \sim \mathrm{Binomial}(n, p)$ and test
 - vs. $H_a: p \neq p_0$ (or one-sided alternatives).
 
 For each simulated dataset, we compute the z statistic:
+
 $$
 \hat p = \frac{X}{n}, \qquad
 Z = \frac{\hat p - p_0}{\sqrt{\frac{p_0(1-p_0)}{n}}}
