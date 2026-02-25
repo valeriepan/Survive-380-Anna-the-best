@@ -5,7 +5,7 @@ Version: 0.0.1
 Authors@R: c(
     person("Tianhong", "Shen", email = "tianhong.shen@mail.utoronto.ca",
            role = c("aut", "cre")),
-    person("TeammateFirst", "TeammateLast", email = "teammate1@email.com",
+    person("Valerie", "Pan", email = "valerie.pan@mail.utoronto.ca",
            role = "aut"),
     person("TeammateFirst", "TeammateLast", email = "teammate2@email.com",
            role = "aut"),
