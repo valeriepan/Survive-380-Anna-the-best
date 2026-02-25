@@ -78,6 +78,34 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 
 # This function calculates the p_value using Monte Carlo method
 # returns a vector of p_value(these are null p_value under H_0) and Monte Carlo standard error for p_value
+
+#' Generate Null p-values with Monte Carlo Simulation
+#'
+#' Simulates binomial samples under the null hypothesis
+#' \eqn{H_0: p = p_0} and computes the corresponding
+#' p-values using the normal-approximation z-test.
+#'
+#' The function returns a vector of p-values generated under H_0.
+#' Under correct calibration, these p-values should follow
+#' a Uniform(0,1) distribution.
+#'
+#' @param N Integer. Number of Monte Carlo simulations.
+#' @param p_0 Numeric in (0,1). Null hypothesis proportion.
+#' @param sample_size Integer. Number of binomial trials (n).
+#' @param alternative Character string specifying the alternative
+#'   hypothesis: \code{"greater"}, \code{"less"}, or \code{"two_sided"}.
+#'
+#' @return A numeric vector of length \code{N} containing
+#' the simulated null p-values
+#' 
+#' @examples
+#' set.seed(1)
+#' pvals <- mc_pval_null(10000, p_0 = 0.5,
+#'                        sample_size = 50,
+#'                        alternative = "two_sided")
+#' hist(pvals)
+#'
+#' @export
 mc_pval_null <- function(N = 10^5, p_0, 
                          sample_size, 
                          alternative = c("greater", "less", "two_sided")) {
