@@ -53,9 +53,9 @@ n <- 50
 c(np0 = n * p_0, n1p0 = n * (1 - p_0))
 ```
 
-## Estimated p-value
+## Estimated $p$-value
 
-### Computing p_val under a observation
+### Computing $p$-value under a observation
 
 ```{r}
 set.seed(1)

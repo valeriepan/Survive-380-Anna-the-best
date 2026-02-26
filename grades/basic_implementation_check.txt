@@ -1,0 +1,7 @@
+I noticed some small typos in your vignette (and edited them). Most functions and test appear to be reasonable.
+
+(I do tend to have most comments for other groups. I don't have many serious ones unless I wanted to be nitpicky.)
+
+Good job!
+
+2/2
