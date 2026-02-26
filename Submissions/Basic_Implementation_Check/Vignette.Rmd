@@ -91,23 +91,27 @@ p_values <- mc_pval_null(
 )
 
 alpha <- 0.05  # significance level
-# should we put alpha as a parameter in the function? since i think we said that was something that could be controlled by the user. 
 
 rejections <- (p_values < alpha) # for checking rejection region (FYI)
 
-# NEED AN IF STATEMENT FOR DIFFERENT ALTERNATIVES
+# plot
 ggplot(data.frame(p_value = p_values), aes(x = p_value)) +
   geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) +
   geom_vline(xintercept = alpha, color = "red", linetype = "dashed", linewidth = 1) +
-  annotate(x = alpha, y = +Inf, label = paste("α =", alpha), vjust = 2, geom = "label", size = 3, color = "red") +
+  annotate(x = alpha, y = +Inf, label = paste("α =", alpha), vjust = 2, 
+           geom = "label", size = 3, color = "red") +
   # Add shaded rejection region
-  annotate("rect", xmin = 0, xmax = alpha, ymin = 0, ymax = Inf, alpha = 0.2, fill = "darkgoldenrod2") +
-  annotate(x = alpha/2, y = +Inf, label = paste("Rejection", "\n", "Region"), vjust = 3, geom = "label", size = 2.5, color = "darkgoldenrod2") +
+  annotate("rect", xmin = 0, xmax = alpha, ymin = 0, ymax = Inf, 
+           alpha = 0.2, fill = "darkgoldenrod2") +
+  annotate(x = alpha/2, y = +Inf, label = paste("Rejection", "\n", "Region"),
+           vjust = 3, geom = "label", size = 2.5, color = "darkgoldenrod2") +
   labs(title = "Histogram of Simulated P-Values",
-       subtitle = paste("Monte Carlo Simulation of One-Sample Z-test for Proportions", "\n" ,"of Binomially Distributed Samples"),
-       caption = paste("number of trials =", sample_size, ", probability of success=", p_0, ", \n",  ", alternative =", alternative, ", \n", "proportion of p-values < α:", mean(p_values < alpha)),
-       x = "P-value",
-       y = "Frequency") +
+       subtitle = paste("Monte Carlo Simulation of One-Sample Z-test for Proportions", 
+                        "\n" ,"of Binomially Distributed Samples"),
+       caption = paste("number of trials =", sample_size, ", \n", "probability of success =", p_0, 
+                       ", \n", "alternative =", alternative, ", \n", 
+                       "proportion of p-values < α:", mean(p_values < alpha)),
+       x = "P-value", y = "Frequency") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
@@ -254,7 +258,8 @@ ggplot(power_curve_one_sided, aes(x = p_true, y = power_hat)) +
 ## Power vs. Sample Size Curve
 
 ```{r}
-#This indicates the sample size required to achieve the desired test capability. Here,   we use 80% as an example.
+#This indicates the sample size required to achieve the desired test capability. 
+# Here, we use 80% as an example.
 
 #set initials
 sample_sizes <- seq(10, 200, by = 10)
