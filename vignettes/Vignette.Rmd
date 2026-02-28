@@ -1,0 +1,332 @@
+---
+title: "Monte Carlo Simulation of a Hypothesis Test Vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Monte Carlo Simulation of a Hypothesis Test Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+nocite: "@*"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(fig.width=7, fig.height=6,fig.align  = "center") 
+```
+
+```{r setup}
+library(Survive380AnnaTheBest)
+library(ggplot2)
+```
+
+This vignette demonstrates how to estimate the Type I error rate, Type II error rate, and power of a hypothesis test for binomially distributed samples using Monte Carlo simulation, via four functions from the `Survive380AnnaTheBest` package:
+
+- Calculates the p_values under observed data and standard error using Monte Carlo sampling `Survive380AnnaTheBest::mc_pval_binom`
+
+- Calculates the null p_value under null hypothesis `Survive380AnnaTheBest::mc_pval_null`
+
+- Estimate Type I error `Survive380AnnaTheBest::mc_type1_binom`
+
+- Estimate Type II error and power at a specific $p_{1}$ `Survive380AnnaTheBest::mc_power_simple_binom`
+
+- Estimate power curve across a grid of $p$-value `Survive380AnnaTheBest::mc_power_curve_binom`
+
+We will produce:
+
+1. A summary table of Type I, Type II error and power
+
+2. A histogram of simulated $p$-value with a vertical line at $\alpha$
+
+3. A power curve plot
+
+## Quick assumption check
+
+Since we are using normal approximation to perform z-test, a common assumption is both $np_{0}$ and $n(1-p_{0})$ should be reasonably big ($\ge 10$)
+
+```{r}
+p_0 <- 0.5
+n <- 50
+
+c(np0 = n * p_0, n1p0 = n * (1 - p_0))
+```
+
+## Estimated $p$-value
+
+### Computing $p$-value under a observation
+
+```{r}
+set.seed(1)
+p_0 <- 0.5 # success probability
+sample_size <- 50 # number of trials
+alternative <- "less"
+s_obs <- 20 # s_obs: number of success observed in one data set
+
+p_value <- mc_pval_binom(
+  p_0 = p_0,
+  s_obs = s_obs,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+p_value$p_value
+p_value$mc_se
+```
+
+### Histogram of null $p$-value under $H_{0}$
+
+```{r}
+# following code used to compute null p_value under H_0
+set.seed(1)
+p_0 <- 0.3
+sample_size <- 60
+alternative <- "less"
+
+p_values <- mc_pval_null(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+alpha <- 0.05  # significance level
+
+rejections <- (p_values < alpha) # for checking rejection region (FYI)
+
+# plot
+ggplot(data.frame(p_value = p_values), aes(x = p_value)) +
+  geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) +
+  geom_vline(xintercept = alpha, color = "red", linetype = "dashed", linewidth = 1) +
+  annotate(x = alpha, y = +Inf, label = paste("α =", alpha), vjust = 2, 
+           geom = "label", size = 3, color = "red") +
+  # Add shaded rejection region
+  annotate("rect", xmin = 0, xmax = alpha, ymin = 0, ymax = Inf, 
+           alpha = 0.2, fill = "darkgoldenrod2") +
+  annotate(x = alpha/2, y = +Inf, label = paste("Rejection", "\n", "Region"),
+           vjust = 3, geom = "label", size = 2.5, color = "darkgoldenrod2") +
+  labs(title = "Histogram of Simulated P-Values",
+       subtitle = paste("Monte Carlo Simulation of One-Sample Z-test for Proportions", 
+                        "\n" ,"of Binomially Distributed Samples"),
+       caption = paste("number of trials =", sample_size, ", \n", "probability of success =", p_0, 
+                       ", \n", "alternative =", alternative, ", \n", 
+                       "proportion of p-values < α:", mean(p_values < alpha)),
+       x = "P-value", y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+```
+
+
+## Estimated Type I error
+
+```{r}
+set.seed(1)
+p_0 <- 0.5
+sample_size <- 50
+alternative <- "greater"
+
+type1_rate <- mc_type1_binom(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+type1_rate$type1_hat
+type1_rate$mc_se
+```
+
+## Estimated Type II error and power for a specific alternative value $p_{1}$
+
+```{r}
+set.seed(1)
+p_0 <- 0.6
+p_1 <- 0.4
+sample_size <- 60
+alternative <- "less"
+
+power_type2 <- mc_power_simple_binom(
+  p_0 = p_0,
+  p_1 = p_1,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+power_type2$power_hat
+power_type2$type2_hat
+power_type2$power_mc_se
+power_type2$type2_mc_se
+```
+
+## Power Curve when alternative is not well-defined
+
+```{r}
+set.seed(1)
+p_0 <- 0.6
+sample_size <- 70
+alternative <- "two_sided"
+
+power_curve <- mc_power_curve_binom(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative
+)
+
+power_curve
+```
+
+### Plot of power curve (two sided)
+
+```{r}
+ggplot(power_curve, aes(x = p_true, 
+                        y = power_hat)) +
+  geom_line(color = "cornflowerblue", 
+            linewidth = 1.2) +
+geom_errorbar(aes(
+  ymin = pmax(0, power_hat - 2 * power_mc_se),
+  ymax = pmin(1, power_hat + 2 * power_mc_se)), 
+                width = 0.01, 
+                color = "grey50", 
+                alpha = 0.5) +
+  geom_hline(yintercept = 0.05, 
+             linetype = "dashed", color = "red") +
+  annotate("text", x = min(power_curve$p_true), 
+           y = 0.08, label = "Significance Level (0.05)", 
+           color = "red", 
+           hjust = 0, 
+           size = 3) +
+  labs(title = "Power Curve of Binomial Test",
+       subtitle = paste("Numbers of trials =", sample_size, 
+                        ", Probability of success =", p_0, 
+                        ",Alternative =", alternative),
+       x = "True Probability (p)", 
+       y = "Power (Probability of Rejecting H0)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+### Power Curve when alternative is greater
+
+```{r}
+set.seed(1)
+p_0 <- 0.6
+sample_size <- 70
+
+alternative_one_sided <- "greater" 
+
+power_curve_one_sided <- mc_power_curve_binom(
+  p_0 = p_0,
+  sample_size = sample_size,
+  alternative = alternative_one_sided
+)
+
+power_curve_one_sided
+```
+
+### Plot of power curve (greater)
+
+```{r}
+alpha_level <- 0.05
+alternative <- alternative_one_sided
+
+ggplot(power_curve_one_sided, aes(x = p_true, y = power_hat)) +
+  geom_line(linewidth = 1.2) +
+  geom_errorbar(
+    aes(
+      ymin = pmax(0, power_hat - 2 * power_mc_se),
+      ymax = pmin(1, power_hat + 2 * power_mc_se)
+    ),
+    width = 0.01,
+    alpha = 0.5
+  ) +
+  geom_vline(xintercept = p_0, linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = alpha_level, linetype = "dashed", linewidth = 0.8) +
+  labs(
+    title = "One-Tailed Power Curve for Binomial Test",
+    subtitle = paste(
+      "Number of trials =", sample_size,
+      ", p0 =", p_0,
+      ", alternative =", alternative
+    ),
+    x = "True Underlying Proportion (p)",
+    y = "Power"
+  ) +
+  theme_minimal()
+```
+
+## Power vs. Sample Size Curve
+
+```{r}
+#This indicates the sample size required to achieve the desired test capability. 
+# Here, we use 80% as an example.
+
+#set initials
+sample_sizes <- seq(10, 200, by = 10)
+M <- 1000
+p_true <- 0.65  
+p_null <- 0.5
+alpha <- 0.05
+power_results <- numeric(length(sample_sizes))
+
+for(i in 1:length(sample_sizes)) {
+  n <- sample_sizes[i]
+  p_hat <- rbinom(M, n, p_true) / n
+  z_stats <- (p_hat - p_null) / sqrt(p_null * (1 - p_null) / n)
+  p_values <- 2 * pnorm(-abs(z_stats))
+  power_results[i] <- mean(p_values < alpha)
+}
+df_power <- matrix(c(sample_sizes, power_results),
+                   ncol = 2,
+                   dimnames = list(NULL, c("SampleSize", "Power")))
+achieved_target <- df_power[df_power[, "Power"] >= 0.8, , drop = FALSE]
+if (nrow(achieved_target) > 0) {
+  required_n <- achieved_target[1, "SampleSize"]
+  cat("To achieve 80% test power，we need at least n =", required_n, "\n")
+} else {
+  cat("fail to reach 80% test power，please enhance the sample size \n")
+}
+```
+
+### Plot of Power vs. Sample Size Curve
+
+```{r}
+ggplot(as.data.frame(df_power), aes(x = SampleSize, y = Power)) +
+  geom_line(color = "cornflowerblue", linewidth = 1.2) +
+  
+  geom_hline(yintercept = 0.8, 
+             linetype = "dashed", 
+             color = "red", 
+             linewidth = 0.8) +
+  
+  annotate("text", x = min(df_power[, "SampleSize"]), 
+           y = 0.82, 
+           label = "Target Power: 80%", color = "red", hjust = 0) +
+  
+  labs(title = " Sample Size vs. Power",
+       x = "Sample Size (n)",
+       y = "Statistical Power") +
+  scale_y_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1)) +
+  theme_minimal()
+```
+
+## Summary table
+
+```{r}
+summary_tab <- data.frame(
+  Quantity = c("Type I error", "Power", "Type II error"),
+  Estimate = c(type1_rate$type1_hat, power_type2$power_hat, power_type2$type2_hat),
+  MC_SE    = c(type1_rate$mc_se, power_type2$power_mc_se, power_type2$type2_mc_se)
+)
+summary_tab
+```
+
+## Generative AI Usage Statement
+
+Generative AI was used to debug part of Function_Code and Testing_Code , assist in plot creation using ggplot2, and help to build up Bibliography.
+GenAI was used for asking what should be contained in a 'good' roxygen documents and give some examples of roxygen.
+
+
+## Bibliography
+
+
