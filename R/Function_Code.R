@@ -30,6 +30,7 @@
 #' @param alternative Character. One of "greater", "less", or "two_sided".
 #' @param s_obs Integer. Number of success you observed in one data set.
 #' @return the p_value under s_obs and Monte Carlo standard error for p_value
+#' @importFrom stats pnorm qnorm rbinom
 #' @examples
 #' set.seed(1)
 #' res <- mc_pval_binom(N = 10000, p_0 = 0.5, s_obs = 30,
@@ -80,6 +81,7 @@ mc_pval_binom <- function(N = 10^5, p_0, s_obs,
 #' @param sample_size Integer. Total trials in binomial (Sample Size per Simulation).
 #' @param alternative Character. One of "greater", "less", or "two_sided".
 #' @return A numeric vector of length \code{N} containing the simulated null p-values.
+#' @importFrom stats pnorm qnorm rbinom
 #'@examples
 #' set.seed(1)
 #' pvals <- mc_pval_null(10000, p_0 = 0.5,
@@ -125,6 +127,7 @@ mc_pval_null <- function(N = 10^5, p_0,
 #' set.seed(1)
 #' mc_type1_binom(N = 20000, p_0 = 0.5, sample_size = 50, alpha = 0.05,
 #'               alternative = "two_sided")
+#' @importFrom stats pnorm qnorm rbinom
 #' @export
 mc_type1_binom <- function(N = 10^5, p_0,
                            sample_size, alpha = 0.05, 
@@ -173,6 +176,7 @@ mc_type1_binom <- function(N = 10^5, p_0,
 #' @param p_1 Numeric. Well-defined alternative hypothesis
 #' 
 #' @return the estimated type II error rate, power of the test and Monte Carlo standard error for both
+#' @importFrom stats pnorm qnorm rbinom
 #' @examples
 #' set.seed(1)
 #' mc_power_simple_binom(N = 20000, p_0 = 0.5, p_1 = 0.6,
@@ -232,8 +236,8 @@ mc_power_simple_binom <- function(N = 10^5, p_0, p_1,
 #' @param p_0 Numeric. Null hypothesis
 #' @param alpha Numeric. Critical value
 #' @param alternative Character. A vector of three different possible alternative
-#' 
 #' @return the estimated type II error rate, power of the test and Monte Carlo standard error for both
+#' @importFrom stats pnorm qnorm rbinom
 #' @examples
 #' set.seed(1)
 #' pc <- mc_power_curve_binom(N = 5000, p_0 = 0.5, alpha = 0.05,
