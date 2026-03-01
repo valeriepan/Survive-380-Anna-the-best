@@ -8,7 +8,7 @@ library(testthat)
 # Survive-380-Anna-the-best/Submissions/Basic_Implementation_Check
 # so that both files are in the same folder.
 
-source("Function_Code.R")
+#source("Function_Code.R")
 
 ################
 # mc_pval_binom
@@ -85,7 +85,7 @@ test_that("mc_type1_binom approximates alpha under null", {
     alternative = "greater"
   )
   
-  expect_named(out, c("type1_hat", "mc_se"))
+  expect_named(out, c("type1_hat", "mc_se","N","p_0","sample_size","alpha","alternative"))
   
   expect_true(out$type1_hat >= 0 && out$type1_hat <= 1)
   expect_true(out$mc_se >= 0)
@@ -120,7 +120,7 @@ test_that("mc_power_simple_binom returns internally consistent power and type II
   
   expect_named(out,
                c("power_hat", "type2_hat",
-                 "power_mc_se", "type2_mc_se"))
+                 "power_mc_se", "type2_mc_se","N","p_0","p_1","sample_size","alpha","alternative"))
   
   expect_true(out$power_hat >= 0 && out$power_hat <= 1)
   expect_true(out$type2_hat >= 0 && out$type2_hat <= 1)
