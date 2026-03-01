@@ -27,16 +27,16 @@
 #' @param N Integer. Number of simulated values (Simulations). Default 10^5.
 #' @param p_0 Numeric. Null hypothesis probability.
 #' @param sample_size Integer. Total trials in binomial (Sample Size per Simulation).
-#' @param alpha Numeric. Critical value. Default 0.05.
 #' @param alternative Character. One of "greater", "less", or "two_sided".
 #' @param s_obs Integer. Number of success you observed in one data set.
 #' @return the p_value under s_obs and Monte Carlo standard error for p_value
 #' @examples
 #' set.seed(1)
-#' pvals <- mc_pval_null(10000, p_0 = 0.5,
-#'                        sample_size = 50,
-#'                        alternative = "two_sided")
-#' hist(pvals)
+#' # Corrected example to use mc_pval_binom and include s_obs
+#' res <- mc_pval_binom(N = 10000, p_0 = 0.5, s_obs = 30,
+#'                      sample_size = 50,
+#'                      alternative = "two_sided")
+#' print(res$p_value)
 
 #' @export
 mc_pval_binom <- function(N = 10^5, p_0, s_obs, 

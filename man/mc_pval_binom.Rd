@@ -22,8 +22,6 @@ mc_pval_binom(
 \item{sample_size}{Integer. Total trials in binomial (Sample Size per Simulation).}
 
 \item{alternative}{Character. One of "greater", "less", or "two_sided".}
-
-\item{alpha}{Numeric. Critical value. Default 0.05.}
 }
 \value{
 the p_value under s_obs and Monte Carlo standard error for p_value
@@ -33,8 +31,9 @@ This function calculates the p_value using Monte Carlo sampling.
 }
 \examples{
 set.seed(1)
-pvals <- mc_pval_null(10000, p_0 = 0.5,
-                       sample_size = 50,
-                       alternative = "two_sided")
-hist(pvals)
+# Corrected example to use mc_pval_binom and include s_obs
+res <- mc_pval_binom(N = 10000, p_0 = 0.5, s_obs = 30,
+                     sample_size = 50,
+                     alternative = "two_sided")
+print(res$p_value)
 }
