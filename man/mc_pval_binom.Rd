@@ -22,8 +22,6 @@ mc_pval_binom(
 \item{sample_size}{Integer. Total trials in binomial (Sample Size per Simulation).}
 
 \item{alternative}{Character. One of "greater", "less", or "two_sided".}
-
-\item{alpha}{Numeric. Critical value. Default 0.05.}
 }
 \value{
 the p_value under s_obs and Monte Carlo standard error for p_value
