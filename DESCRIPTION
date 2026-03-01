@@ -13,8 +13,6 @@ Authors@R: c(
            role = "aut"),
     person("Junyi", "Hou", email = "junyi.hou@mail.utoronto.ca",
            role = "aut")
-    person("TeammateFirst", "TeammateLast", email = "teammate4@email.com",
-           role = "aut")
     )
 Description: Monte Carlo simulation utilities for binomial hypothesis tests,
     including estimates of Type I error, Type II error, and power curves.
