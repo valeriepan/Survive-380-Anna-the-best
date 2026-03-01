@@ -11,6 +11,8 @@ Authors@R: c(
            role = "aut"),
     person("Feiyang", "Xue", email = "feiyang.xue@mail.utoronto.ca",
            role = "aut"),
+    person("Junyi", "Hou", email = "junyi.hou@mail.utoronto.ca",
+           role = "aut")
     person("TeammateFirst", "TeammateLast", email = "teammate4@email.com",
            role = "aut")
     )
