@@ -32,7 +32,6 @@
 #' @return the p_value under s_obs and Monte Carlo standard error for p_value
 #' @examples
 #' set.seed(1)
-#' # Corrected example to use mc_pval_binom and include s_obs
 #' res <- mc_pval_binom(N = 10000, p_0 = 0.5, s_obs = 30,
 #'                      sample_size = 50,
 #'                      alternative = "two_sided")
