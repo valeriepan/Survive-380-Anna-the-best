@@ -32,11 +32,11 @@
 #' @return the p_value under s_obs and Monte Carlo standard error for p_value
 #' @examples
 #' set.seed(1)
-#' pvals <- mc_pval_null(10000, p_0 = 0.5,
-#'                        sample_size = 50,
-#'                        alternative = "two_sided")
-#' hist(pvals)
-#' @importFrom stats pnorm qnorm rbinom
+#' res <- mc_pval_binom(N = 10000, p_0 = 0.5, s_obs = 30,
+#'                      sample_size = 50,
+#'                      alternative = "two_sided")
+#' print(res$p_value)
+
 #' @export
 mc_pval_binom <- function(N = 10^5, p_0, s_obs, 
                           sample_size, 
