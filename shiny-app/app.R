@@ -1,8 +1,5 @@
 library(shiny)
 
-# Load your group function file
-source("Function_Code.R")
-
 ui <- navbarPage(
   title = "Monte Carlo Binomial Test App",
   
