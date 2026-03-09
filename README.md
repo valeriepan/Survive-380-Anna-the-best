@@ -34,3 +34,5 @@ Then we convert $Z$ to a **p-value** according to the chosen alternative. Repeat
 
 ---
 
+## Link to Posit Connect Cloud:
+https://valeriepan-survive-380-anna-the-best.share.connect.posit.cloud
