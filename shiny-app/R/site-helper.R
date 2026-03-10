@@ -54,6 +54,18 @@ palette_choices <- list(
     power_line = "#009688",
     alpha_line = "#E64A19",
     reject_fill = "#CE93D8"
+  ),
+  "Academic Grey" = list(
+    hist_fill   = "#ADB5BD", 
+    alpha_line  = "#212529", 
+    power_line  = "#495057", 
+    reject_fill = "#E9ECEF" 
+  ),
+  "Ocean" = list(
+    hist_fill   = "#48CAE4", 
+    alpha_line  = "#03045E", 
+    power_line  = "#0077B6", 
+    reject_fill = "#CAF0F8"  
   )
 )
 
