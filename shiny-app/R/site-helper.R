@@ -86,12 +86,12 @@ assumption_check <- function(n, p0) {
     n1p0 = n1p0,
     text = if (ok) {
       sprintf(
-        "Normal approximation looks reasonable: n × p₀ = %.1f and n × (1 - p₀) = %.1f, both at least 10.",
+        "Normal approximation works: n × p₀ = %s and n × (1 - p₀) = %s, both at least 10.",
         np0, n1p0
       )
     } else {
       sprintf(
-        "Sample size is too small!, n × p₀ = %.1f and n × (1 - p₀) = %.1f, at least one is below 10.",
+        "Sample size is too small!, n × p₀ = %s and n × (1 - p₀) = %s, they should be at least 10.",
         np0, n1p0
       )
     }
@@ -124,14 +124,14 @@ make_sample_size_curve <- function(N, p0, p1, alpha, alternative, n_grid) {
 
 make_summary_df <- function(res) {
   data.frame(
-    Metric = c("Monte Carlo p-value", "Type I error", "Type II error", "Power"),
+    Metric = c("Monte Carlo p-value", "Type I error rate", "Type II error rate", "Power"),
     Estimate = c(
       res$pval_out$p_value,
       res$type1_out$type1_hat,
       res$power_out$type2_hat,
       res$power_out$power_hat
     ),
-    MC_SE = c(
+    "Monte Carlo Standard Error" = c(
       res$pval_out$mc_se,
       res$type1_out$mc_se,
       res$power_out$type2_mc_se,
@@ -143,7 +143,7 @@ make_summary_df <- function(res) {
 
 make_pvalue_df <- function(res, s_obs, sample_size) {
   data.frame(
-    Quantity = c("Observed successes", "Observed proportion", "Monte Carlo p-value", "Monte Carlo SE"),
+    Quantity = c("Observed successes", "Observed proportion", "Monte Carlo p-value", "Monte Carlo standard error"),
     Value = c(
       s_obs,
       s_obs / sample_size,

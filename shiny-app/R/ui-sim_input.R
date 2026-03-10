@@ -29,7 +29,7 @@ sim_inputs <- div(
   
   sliderInput(
     inputId = "p0",
-    label = "Null proportion $p_0$",
+    label = "Null proportion ($H_0$ : $p = p_0$)",
     min = 0.01,
     max = 0.99,
     value = 0.50,
@@ -38,7 +38,7 @@ sim_inputs <- div(
   
   sliderInput(
     inputId = "p1",
-    label = "True proportion $p_1$ for power / Type II error",
+    label = "True proportion ($H_a$ : $p = p_1$)",
     min = 0.01,
     max = 0.99,
     value = 0.65,
