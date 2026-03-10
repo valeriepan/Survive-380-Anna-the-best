@@ -335,6 +335,11 @@ Generative AI was used in the following areas:
 
 - debugging package compilation errors and notes.
 
+- helping to build the UI for Rshiny app
+
+- helping to create manifest.json and ui-latex.R file
+
+- helping to choose color for the website
 
 ## Bibliography
 
