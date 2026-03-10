@@ -103,13 +103,13 @@ output$assumption_alert <- renderUI({
   if (check$ok) {
     div(
       class = "alert alert-success",
-      tags$strong("Looks fine. "),
+      tags$strong("Nice! "),
       check$text
     )
   } else {
     div(
       class = "alert alert-warning",
-      tags$strong("Caution. "),
+      tags$strong("Warning! "),
       check$text
     )
   }

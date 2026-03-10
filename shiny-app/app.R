@@ -25,7 +25,7 @@ ui <- page_sidebar(
       col_widths = c(6, 6),
       card(
         full_screen = FALSE,
-        card_header("Quick summary"),
+        card_header("Summary Table"),
         card_body(withSpinner(tableOutput("summary_table")))
       ),
       card(
@@ -59,7 +59,7 @@ ui <- page_sidebar(
       ),
       
       nav_panel(
-        "Sample size planner",
+        "Sample size and Power",
         br(),
         withSpinner(plotOutput("sample_size_plot", height = "460px"))
       ),

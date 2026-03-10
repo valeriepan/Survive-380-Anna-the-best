@@ -86,12 +86,12 @@ assumption_check <- function(n, p0) {
     n1p0 = n1p0,
     text = if (ok) {
       sprintf(
-        "Normal approximation looks reasonable: np0 = %.1f and n(1-p0) = %.1f, both at least 10.",
+        "Normal approximation looks reasonable: n × p₀ = %.1f and n × (1 - p₀) = %.1f, both at least 10.",
         np0, n1p0
       )
     } else {
       sprintf(
-        "Normal approximation may be shaky here: np0 = %.1f and n(1-p0) = %.1f, and at least one is below 10.",
+        "Sample size is too small!, n × p₀ = %.1f and n × (1 - p₀) = %.1f, at least one is below 10.",
         np0, n1p0
       )
     }
