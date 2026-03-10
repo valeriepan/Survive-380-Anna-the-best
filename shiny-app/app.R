@@ -21,8 +21,6 @@ ui <- page_sidebar(
   layout_columns(
     col_widths = c(12),
     
-    intro_card,
-    
     layout_columns(
       col_widths = c(6, 6),
       card(

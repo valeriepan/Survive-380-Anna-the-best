@@ -56,11 +56,11 @@ sim_inputs <- div(
   
   selectInput(
     inputId = "alternative",
-    label = "Hypothesis direction",
+    label = "Alternative Choice",
     choices = list(
-      "Right-tailed: $H_a: p > p_0$" = "greater",
-      "Left-tailed: $H_a: p < p_0$" = "less",
-      "Two-sided: $H_a: p \u2260 p_0$" = "two_sided"
+      "Greater: Hₐ: p > p₀" = "greater",
+      "Less: Hₐ: p < p₀" = "less",
+      "Two Sided: Hₐ: p ≠ p₀" = "two_sided"
     ),
     selected = "two_sided"
   ),
@@ -74,7 +74,7 @@ sim_inputs <- div(
   
   actionButton(
     inputId = "run_sim",
-    label = "Run simulation",
+    label = "Run",
     class = "btn-primary"
   )
 )
