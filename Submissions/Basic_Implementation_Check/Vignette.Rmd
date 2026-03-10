@@ -331,15 +331,17 @@ Generative AI was used in the following areas:
 
 - helping to build up Bibliography;
 
-- determining what should be contained in a 'good' roxygen documents and to provide some examples of roxygen; and
+- determining what should be contained in a 'good' roxygen documents and to provide some examples of roxygen;
 
-- debugging package compilation errors and notes.
+- debugging package compilation errors and notes;
 
-- helping to build the UI for Rshiny app
+- helping to build the UI for Rshiny app;
 
-- helping to create manifest.json and ui-latex.R file
+- helping to create manifest.json and ui-latex.R file;
 
-- helping to choose color for the website
+- helping to choose color for the website;
+
+- help to write the README, lol.
 
 ## Bibliography
 
