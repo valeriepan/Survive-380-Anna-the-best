@@ -1,6 +1,8 @@
 library(shiny)
+library(bsicons)
 library(bslib)
 library(shinycssloaders)
+library(plotly)
 
 
 ui <- page_sidebar(
@@ -10,6 +12,16 @@ ui <- page_sidebar(
     "navbar-bg" = "#2C3E50"
   ),
   title = "Monte Carlo Simulation for Binomial Proportion Tests",
+  tags$head(
+    tags$style(HTML(".nav-tabs .nav-link {
+        color: #2C3E50 !important;
+    }
+      .nav-tabs .nav-link:hover {
+        color: #1a252f !important; 
+      }
+    "))
+  ),
+  
   latex_tags,
   
   sidebar = sidebar(
@@ -25,8 +37,8 @@ ui <- page_sidebar(
       col_widths = c(6, 6),
       card(
         full_screen = FALSE,
-        card_header("Summary Table"),
-        card_body(withSpinner(tableOutput("summary_table")))
+        card_header("Simulation Table"),
+        card_body(withSpinner(uiOutput("summary_boxes")))
       ),
       card(
         full_screen = FALSE,
@@ -37,6 +49,7 @@ ui <- page_sidebar(
     
     navset_card_tab(
       id = "main_tabs",
+      full_screen = TRUE,
       
       nav_panel(
         "Observed p-value",
@@ -47,13 +60,13 @@ ui <- page_sidebar(
       nav_panel(
         "Null p-value histogram",
         br(),
-        withSpinner(plotOutput("null_hist", height = "460px"))
+        withSpinner(plotlyOutput("null_hist", height = "460px"))
       ),
       
       nav_panel(
         "Power curve",
         br(),
-        withSpinner(plotOutput("power_curve_plot", height = "460px")),
+        withSpinner(plotlyOutput("power_curve_plot", height = "460px")),
         br(),
         withSpinner(tableOutput("power_curve_head"))
       ),
@@ -61,7 +74,7 @@ ui <- page_sidebar(
       nav_panel(
         "Sample size and Power",
         br(),
-        withSpinner(plotOutput("sample_size_plot", height = "460px"))
+        withSpinner(plotlyOutput("sample_size_plot", height = "460px"))
       ),
       
       nav_panel(
@@ -72,6 +85,7 @@ ui <- page_sidebar(
     )
   )
 )
+
 
 server <- function(input, output, session) {
   source(file.path("server-plots.R"), local = TRUE)$value

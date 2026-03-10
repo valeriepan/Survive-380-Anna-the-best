@@ -20,7 +20,6 @@ observeEvent(list(input$sample_size, input$p0), {
 
 sim_results <- eventReactive(input$run_sim, {
   req(input$s_obs)
-  set.seed(input$seed)
   
   pal <- get_palette(input$palette_name)
   alpha_num <- as.numeric(input$alpha)
@@ -89,20 +88,62 @@ sim_results <- eventReactive(input$run_sim, {
   )
 }, ignoreInit = FALSE)
 
-output$summary_table <- renderTable({
-  make_summary_df(sim_results())
-}, digits = 4)
+output$summary_boxes <- renderUI({
+  res <- sim_results()
+  
+  pval_est <- sprintf("%.4f", res$pval_out$p_value)
+  pval_se  <- sprintf("%.4f", res$pval_out$mc_se)
+  
+  type1_est <- sprintf("%.4f", res$type1_out$type1_hat)
+  type1_se  <- sprintf("%.4f", res$type1_out$mc_se)
+  
+  type2_est <- sprintf("%.4f", res$power_out$type2_hat)
+  type2_se  <- sprintf("%.4f", res$power_out$type2_mc_se)
+  
+  power_est <- sprintf("%.4f", res$power_out$power_hat)
+  power_se  <- sprintf("%.4f", res$power_out$power_mc_se)
+  
+  layout_columns(
+    col_widths = c(6, 6),
+    
+    value_box(
+      title = "Monte Carlo p-value",
+      value = pval_est,
+      paste("SE:", pval_se),
+      theme = "info"
+    ), 
+    value_box(
+      title = "Power",
+      value = power_est,
+      paste("SE:", power_se),
+      theme = "primary"
+    ),
+    value_box(
+      title = "Type I error rate",
+      value = type1_est,
+      paste("SE:", type1_se),
+      theme = "danger"
+    ),
+    value_box(
+      title = "Type II error rate",
+      value = type2_est,
+      paste("SE:", type2_se),
+      theme = "warning"
+    )
+  )
+  })
 
 output$pvalue_table <- renderTable({
   make_pvalue_df(sim_results(), input$s_obs, input$sample_size)
-}, digits = 5)
+}, digits = 5, width = "100%")
 
 output$assumption_alert <- renderUI({
   check <- sim_results()$check
   
   if (check$ok) {
     div(
-      class = "alert alert-success",
+      class = "alert text-white", 
+      style = "background-color: #2C3E50;",
       tags$strong("Nice! "),
       check$text
     )
@@ -117,20 +158,24 @@ output$assumption_alert <- renderUI({
 
 output$power_curve_head <- renderTable({
   head(sim_results()$power_curve, 10)
-}, digits = 4)
+}, digits = 4, width = "100%", align = "c")
 
-output$null_hist <- renderPlot({
+output$null_hist <- renderPlotly({
   res <- sim_results()
   pal <- res$palette
   df <- data.frame(p_value = res$null_pvals)
   
-  ggplot(df, aes(x = p_value)) +
+  hist_data <- hist(df$p_value, breaks = 30, plot = FALSE)
+  max_count <- max(hist_data$counts)
+  y_limit <- max_count * 1.15
+  
+  p <- ggplot(df, aes(x = p_value)) +
     annotate(
       "rect",
       xmin = 0,
       xmax = res$alpha_num,
       ymin = 0,
-      ymax = Inf,
+      ymax = input$N,
       alpha = 0.20,
       fill = pal$reject_fill
     ) +
@@ -155,23 +200,32 @@ output$null_hist <- renderPlot({
         round(mean(res$null_pvals < res$alpha_num), 4)
       )
     ) +
-    theme_minimal(base_size = 13)
+    coord_cartesian(ylim = c(0, y_limit)) +
+    theme_minimal(base_size = 13)+theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5)
+    )
+  ggplotly(p) %>% 
+    layout(margin = list(t = 90)) %>%
+    config(displaylogo = FALSE)
+  
 })
 
-output$power_curve_plot <- renderPlot({
+output$power_curve_plot <- renderPlotly({
   res <- sim_results()
   pal <- res$palette
   pc <- res$power_curve
   
-  ggplot(pc, aes(x = p_true, y = power_hat)) +
-    geom_line(color = pal$power_line, linewidth = 1.2) +
-    geom_errorbar(
+ p <- ggplot(pc, aes(x = p_true, y = power_hat)) +
+    geom_line(aes(group = 1), color = pal$power_line, linewidth = 1.2) +
+    geom_ribbon(
       aes(
         ymin = pmax(0, power_hat - 2 * power_mc_se),
         ymax = pmin(1, power_hat + 2 * power_mc_se)
       ),
-      width = 0.005,
-      alpha = 0.40
+      fill = pal$power_line,
+      alpha = 0.35,
+      color = NA
     ) +
     geom_vline(xintercept = input$p0, linetype = "dashed") +
     geom_hline(yintercept = res$alpha_num, linetype = "dashed", color = pal$alpha_line) +
@@ -187,23 +241,30 @@ output$power_curve_plot <- renderPlot({
       y = "Power"
     ) +
     coord_cartesian(ylim = c(0, 1)) +
-    theme_minimal(base_size = 13)
+    theme_minimal(base_size = 13)+
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5)
+    )
+  ggplotly(p, tooltip = c("x", "y")) %>% 
+    layout(margin = list(t = 70))
 })
 
-output$sample_size_plot <- renderPlot({
+output$sample_size_plot <- renderPlotly({
   res <- sim_results()
   pal <- res$palette
   ss <- res$sample_size_curve
   
-  ggplot(ss, aes(x = sample_size, y = power_hat)) +
-    geom_line(color = pal$power_line, linewidth = 1.2) +
-    geom_errorbar(
+  p <- ggplot(ss, aes(x = sample_size, y = power_hat)) +
+    geom_line(aes(group = 1), color = pal$power_line, linewidth = 1.2) +
+    geom_ribbon(
       aes(
         ymin = pmax(0, power_hat - 2 * power_mc_se),
         ymax = pmin(1, power_hat + 2 * power_mc_se)
       ),
-      width = 4,
-      alpha = 0.35
+      fill = pal$power_line,
+      alpha = 0.35,
+      color = NA
     ) +
     geom_hline(yintercept = 0.80, linetype = "dashed", color = pal$alpha_line) +
     annotate(
@@ -225,5 +286,13 @@ output$sample_size_plot <- renderPlot({
       y = "Power"
     ) +
     coord_cartesian(ylim = c(0, 1)) +
-    theme_minimal(base_size = 13)
+    theme_minimal(base_size = 13)+
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5)
+    )
+  
+  ggplotly(p, tooltip = c("x", "y")) %>% 
+    layout(margin = list(t = 90)) %>%
+    config(displaylogo = FALSE)
 })
