@@ -96,18 +96,13 @@ assumption_check <- function(n, p0) {
     ok = ok,
     np0 = np0,
     n1p0 = n1p0,
-    text = if (ok) {
-      sprintf(
-        "Normal approximation works: n × p₀ = %s and n × (1 - p₀) = %s, both at least 10.",
-        np0, n1p0
-      )
-    } else {
-      sprintf(
-        "Sample size is too small!, n × p₀ = %s and n × (1 - p₀) = %s, they should be at least 10.",
-        np0, n1p0
-      )
-    }
-  )
+    
+    # bolded part
+    header = if (ok) "Normal approximation works: " else "Sample size is too small! ",
+    # details part (not bolded)
+    details = paste0("n × p₀ = ", np0, " and n × (1 - p₀) = ", n1p0, 
+                     if(ok) ", both at least 10." else ", they should be at least 10.")
+    )
 }
 
 make_sample_size_curve <- function(N, p0, p1, alpha, alternative, n_grid) {
