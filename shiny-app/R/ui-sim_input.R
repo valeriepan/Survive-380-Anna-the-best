@@ -82,7 +82,7 @@ sim_inputs <- div(
   
   selectInput(
     inputId = "palette_name",
-    label = "Colour theme",
+    label = "Plot palette",
     choices = names(palette_choices),
     selected = "Colorblind Friendly"
   ),

@@ -86,7 +86,7 @@ sim_results <- eventReactive(input$run_sim, {
     power_curve = power_curve,
     sample_size_curve = sample_size_curve
   )
-}, ignoreInit = FALSE)
+}, ignoreInit = TRUE)
 
 output$summary_boxes <- renderUI({
   res <- sim_results()
@@ -137,24 +137,7 @@ output$pvalue_table <- renderTable({
   make_pvalue_df(sim_results(), input$s_obs, input$sample_size)
 }, digits = 5, width = "100%")
 
-output$assumption_alert <- renderUI({
-  check <- sim_results()$check
-  
-  if (check$ok) {
-    div(
-      class = "alert text-white", 
-      style = "background-color: #2C3E50;",
-      tags$strong("Nice! "),
-      check$text
-    )
-  } else {
-    div(
-      class = "alert alert-warning",
-      tags$strong("Warning! "),
-      check$text
-    )
-  }
-})
+
 
 output$power_curve_head <- renderTable({
   head(sim_results()$power_curve, 10)

@@ -3,7 +3,7 @@ library(bsicons)
 library(bslib)
 library(shinycssloaders)
 library(plotly)
-
+library(ggplot2)
 
 ui <- page_sidebar(
   theme = bs_theme(
@@ -11,15 +11,134 @@ ui <- page_sidebar(
     bootswatch = "flatly",
     "navbar-bg" = "#2C3E50"
   ),
-  title = "Monte Carlo Simulation of a Hypothesis Test for Binomial Proportions",
+  
+  title = div(
+    h2(
+      "Monte Carlo Simulation of a Hypothesis Test for Binomial Proportions",
+      style = "color: #FFFFFF; margin: 0; font-weight: 700;"
+    )
+  ),
+  
   tags$head(
-    tags$style(HTML(".nav-tabs .nav-link {
-        color: #2C3E50 !important;
+    tags$style(HTML("
+    body {
+      background: #F4F7FB;
+      color: #1F2937;
     }
-      .nav-tabs .nav-link:hover {
-        color: #1a252f !important; 
-      }
-    "))
+
+    .bslib-sidebar-layout > .sidebar {
+      background: #FFFFFF;
+      border-right: 1px solid #E5E7EB;
+      padding: 1.25rem;
+    }
+
+    .card,
+    .value-box,
+    .navset-card,
+    .sidebar {
+      border: none !important;
+      border-radius: 18px !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .card-header {
+      background: transparent !important;
+      border-bottom: 1px solid #EEF2F7 !important;
+      font-weight: 600;
+      color: #0F172A;
+    }
+
+    .nav-tabs {
+      border-bottom: none !important;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-tabs .nav-link {
+      color: #475569 !important;
+      background: #EEF3FB;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 0.65rem 1rem;
+      margin-right: 0.15rem;
+    }
+
+    .nav-tabs .nav-link:hover {
+      background: #E2E8F0;
+      color: #1F2937 !important;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: #0F172A !important;
+      background: #FFFFFF !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: #2952CC !important;
+      border-color: #2952CC !important;
+      border-radius: 12px !important;
+      font-weight: 600;
+      padding: 0.65rem 1.15rem;
+    }
+
+    .btn-primary:hover {
+      background-color: #1E40AF !important;
+      border-color: #1E40AF !important;
+    }
+
+    .form-label,
+    .control-label {
+      font-weight: 600;
+      color: #0F172A;
+      margin-bottom: 0.45rem;
+    }
+
+    .shiny-input-container {
+      margin-bottom: 1rem;
+    }
+
+    .irs--shiny .irs-bar,
+    .irs--shiny .irs-single {
+      background: #2952CC !important;
+      border-color: #2952CC !important;
+    }
+
+    .irs--shiny .irs-handle > i:first-child {
+      background: #2952CC !important;
+    }
+
+    .app-alert {
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-left: 5px solid #2952CC;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-alert-warning {
+      border-left-color: #D97706;
+      background: #FFF7ED;
+    }
+
+    .app-alert-success {
+      border-left-color: #059669;
+      background: #ECFDF5;
+    }
+
+    .app-title {
+      margin-bottom: 0.2rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .app-subtitle {
+      color: #64748B;
+      margin-bottom: 0;
+    }
+  "))
   ),
   
   latex_tags,
@@ -35,16 +154,10 @@ ui <- page_sidebar(
     
     fill = FALSE, # keeps boxes same size as contents (prevent unnecessary gaps)
     
-    div( 
-      # note: changed from card to this method including server function for 
-      # increased customization, e.g. changing colours, font size, etc.
-      
-      # build a text box
-      style = "background-color: #f8f9fa; padding: 20px; border-radius: 8px; 
-        border: 1px solid #dee2e6; margin-bottom: 5px;",
-      
-      h4("Normal approximation check", style = "color: #2C3E50; font-size: 1rem;"),
-      uiOutput("assumption_alert", style = "font-size: 0.85rem;")
+    div(
+      class = "app-alert",
+      h4("Normal approximation check", style = "font-size: 1rem; margin-bottom: 0.35rem;"),
+      uiOutput("assumption_alert", style = "font-size: 0.9rem;")
     ),
     
     card(
@@ -99,15 +212,17 @@ server <- function(input, output, session) {
   output$assumption_alert <- renderUI({
     result <- assumption_check(input$sample_size, input$p0)
     
-    # Set color based on status
-    text_color <- if (result$ok) "#2ecc71" else "#e74c3c" 
+    alert_class <- if (result$ok) "app-alert app-alert-success" else "app-alert app-alert-warning"
+    text_color  <- if (result$ok) "#065F46" else "#92400E"
     
     tags$div(
-      style = paste0("color: ", text_color),
-      tags$strong(result$header), # make the text bold 
-      tags$span(result$details)    # keep it on the same line
+      class = alert_class,
+      style = paste0("color: ", text_color, "; margin-bottom: 0;"),
+      tags$strong(result$header),
+      tags$span(result$details)
     )
   })
+  
 }
 
 shinyApp(ui = ui, server = server)
