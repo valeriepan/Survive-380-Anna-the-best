@@ -80,6 +80,7 @@ sim_inputs <- div(
   ),
   
   
+  
   selectInput(
     inputId = "palette_name",
     label = "Plot palette",

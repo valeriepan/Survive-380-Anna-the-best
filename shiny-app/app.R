@@ -182,6 +182,8 @@ ui <- page_sidebar(
         withSpinner(plotlyOutput("null_hist", height = "460px"))
       ),
       
+      
+      
       nav_panel(
         "Power curve",
         br(),
@@ -200,6 +202,11 @@ ui <- page_sidebar(
         "Help",
         br(),
         help_panel
+      ),
+      nav_panel(
+        "Teaching mode",
+        br(),
+        uiOutput("teaching_mode")
       )
     )
   )

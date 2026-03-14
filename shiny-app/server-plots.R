@@ -194,6 +194,8 @@ output$null_hist <- renderPlotly({
   
 })
 
+
+
 output$power_curve_plot <- renderPlotly({
   res <- sim_results()
   pal <- res$palette
@@ -278,4 +280,182 @@ output$sample_size_plot <- renderPlotly({
   ggplotly(p, tooltip = c("x", "y")) %>% 
     layout(margin = list(t = 90)) %>%
     config(displaylogo = FALSE)
+})
+
+output$teaching_mode <- renderUI({
+  req(input$s_obs)
+  
+  phat <- input$s_obs / input$sample_size
+  
+  alt_symbol <- switch(
+    input$alternative,
+    "less" = "<",
+    "greater" = ">",
+    "two_sided" = "\u2260"
+  )
+  
+  alt_text_long <- switch(
+    input$alternative,
+    "less" = "the true proportion is smaller than the null value",
+    "greater" = "the true proportion is greater than the null value",
+    "two_sided" = "the true proportion is different from the null value"
+  )
+  
+  res <- tryCatch(sim_results(), error = function(e) NULL)
+  
+  # Optional result text
+  result_block <- if (is.null(res)) {
+    tags$div(
+      class = "app-alert app-alert-warning",
+      style = "margin-top: 1rem;",
+      tags$strong("No simulation results yet. "),
+      "Click the Run button to generate the Monte Carlo p-value, power, and final decision."
+    )
+  } else {
+    decision_text <- if (res$pval_out$p_value < res$alpha_num) {
+      "Reject H<sub>0</sub>"
+    } else {
+      "Fail to reject H<sub>0</sub>"
+    }
+    
+    plain_english <- if (res$pval_out$p_value < res$alpha_num) {
+      "The observed result would be quite unusual if the null hypothesis were true, so we have evidence against H<sub>0</sub>."
+    } else {
+      "The observed result is not unusual enough under the null hypothesis, so we do not have strong enough evidence against H<sub>0</sub>."
+    }
+    
+    tags$div(
+      class = "app-alert app-alert-success",
+      style = "margin-top: 1rem;",
+      tags$h5("4. Final interpretation", style = "margin-bottom: 0.6rem; font-weight: 700;"),
+      tags$p(
+        HTML(sprintf(
+          "The Monte Carlo estimated p-value is <b>%.4f</b> and the significance level is <b>\u03B1 = %.2f</b>.",
+          res$pval_out$p_value, res$alpha_num
+        ))
+      ),
+      tags$p(
+        HTML(sprintf(
+          "Because <b>p-value %s \u03B1</b>, the decision is: <b>%s</b>.",
+          if (res$pval_out$p_value < res$alpha_num) "<" else "\u2265",
+          decision_text
+        ))
+      ),
+      tags$p(HTML(plain_english)),
+      tags$p(
+        HTML(
+          "<b>Important note for beginners:</b> “Fail to reject H<sub>0</sub>” does <u>not</u> mean that H<sub>0</sub> has been proven true. It only means the data do not provide strong enough evidence against H<sub>0</sub> at the chosen significance level."
+        )
+      )
+    )
+  }
+  
+  tags$div(
+    class = "app-alert",
+    
+    tags$h4("Teaching mode: step-by-step explanation(For Monte Carlo Simulation beginners)", class = "app-title"),
+    tags$p(
+      class = "app-subtitle",
+      "This panel explains what the hypothesis test is doing, what the symbols mean, and how to interpret the result."
+    ),
+    
+    tags$hr(),
+    
+    tags$h5("1. What question are we testing?", style = "font-weight: 700;"),
+    tags$p(
+      HTML(sprintf(
+        "We are testing whether the population proportion <b>p</b> is equal to <b>%.2f</b> or whether there is evidence that <b>%s</b>.",
+        input$p0, alt_text_long
+      ))
+    ),
+    tags$ul(
+      tags$li(HTML(sprintf("<b>Null hypothesis H<sub>0</sub>:</b> p = %.2f", input$p0))),
+      tags$li(HTML(sprintf("<b>Alternative hypothesis H<sub>a</sub>:</b> p %s %.2f", alt_symbol, input$p0)))
+    ),
+    tags$p(
+      "The null hypothesis is the baseline assumption. In a Monte Carlo test, we simulate data as if this null hypothesis were true, then ask whether the observed result looks unusual."
+    ),
+    
+    tags$hr(),
+    
+    tags$h5("2. What does the observed sample tell us?", style = "font-weight: 700;"),
+    tags$p(
+      HTML(sprintf(
+        "You observed <b>%d successes</b> out of <b>%d trials</b>.",
+        input$s_obs, input$sample_size
+      ))
+    ),
+    tags$ul(
+      tags$li(HTML(sprintf("<b>n = %d</b> is the sample size.", input$sample_size))),
+      tags$li(HTML(sprintf("<b>x = %d</b> is the observed number of successes.", input$s_obs))),
+      tags$li(HTML(sprintf("<b>p̂ = x / n = %d / %d = %.4f</b> is the sample proportion.", input$s_obs, input$sample_size, phat)))
+    ),
+    tags$p(
+      "The sample proportion is your data-based estimate of the true population proportion. It is the proportion actually seen in this sample."
+    ),
+    
+    tags$hr(),
+    
+    tags$h5("3. How does the Monte Carlo hypothesis test work?", style = "font-weight: 700;"),
+    tags$ol(
+      tags$li(
+        HTML(sprintf(
+          "Assume for the moment that <b>H<sub>0</sub> is true</b>, so the true proportion is <b>p = %.2f</b>.",
+          input$p0
+        ))
+      ),
+      tags$li(
+        HTML(sprintf(
+          "Generate many simulated samples from a <b>Binomial(n = %d, p = %.2f)</b> model.",
+          input$sample_size, input$p0
+        ))
+      ),
+      tags$li(
+        "For each simulated sample, compute how extreme the result is relative to the null hypothesis."
+      ),
+      tags$li(
+        "Count how often the simulated result is at least as extreme as the observed one."
+      ),
+      tags$li(
+        "That proportion is the Monte Carlo p-value."
+      )
+    ),
+    tags$p(
+      "In simple language: the p-value tells us how surprising our observed result would be if the null hypothesis were actually true."
+    ),
+    
+    
+    result_block,
+    
+    if (!is.null(res)) {
+      tags$div(
+        class = "app-alert",
+        style = "margin-top: 1rem;",
+        tags$h5("Extra learning notes", style = "margin-bottom: 0.6rem; font-weight: 700;"),
+        tags$ul(
+          tags$li(
+            HTML(sprintf(
+              "<b>Type I error rate:</b> %.4f. This is the probability of rejecting H<sub>0</sub> when H<sub>0</sub> is actually true.",
+              res$type1_out$type1_hat
+            ))
+          ),
+          tags$li(
+            HTML(sprintf(
+              "<b>Power:</b> %.4f. This is the probability of correctly rejecting H<sub>0</sub> when the true proportion is <b>p<sub>1</sub> = %.2f</b>.",
+              res$power_out$power_hat, input$p1
+            ))
+          ),
+          tags$li(
+            HTML(sprintf(
+              "<b>Type II error rate:</b> %.4f. This is the probability of failing to reject H<sub>0</sub> when the true proportion is actually <b>%.2f</b>.",
+              res$power_out$type2_hat, input$p1
+            ))
+          )
+        ),
+        tags$p(
+          "These quantities are different from the p-value. The p-value is about this specific observed sample. Power and error rates describe the long-run behavior of the testing procedure."
+        )
+      )
+    }
+  )
 })
