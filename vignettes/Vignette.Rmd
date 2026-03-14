@@ -326,6 +326,8 @@ summary_tab
 Generative AI was used to debug part of Function_Code and Testing_Code , assist in plot creation using ggplot2, and help to build up Bibliography.
 GenAI was used for asking what should be contained in a 'good' roxygen documents and give some examples of roxygen.
 
+Generative AI was used to initiate the shiny app. It was used to help understanding too.
+
 
 ## Bibliography
 
