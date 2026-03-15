@@ -1,0 +1,12 @@
+This looks fantastic and I love that based on the commit history it seems like everyone has actively contributed!
+
+Key comments:
+1. Your "Monte Carlo p-value" box is wrong (it always appears to be 1, no matter what?)
+2. For the "power curve", there's a table with the following columns:
+
+p_true 	power_hat 	type2_hat 	power_mc_se 	type2_mc_se 
+
+I would personally format these to be nicer, similar to how the input display on the left is formatted nicely.
+
+Otherwise, I am very happy with the example!
+
