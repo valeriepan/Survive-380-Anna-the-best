@@ -213,21 +213,6 @@ ui <- page_sidebar(
 
 server <- function(input, output, session) {
   source(file.path("server-plots.R"), local = TRUE)$value
-  
-  output$assumption_alert <- renderUI({
-    result <- assumption_check(input$sample_size, input$p0)
-    
-    alert_class <- if (result$ok) "app-alert app-alert-success" else "app-alert app-alert-warning"
-    text_color  <- if (result$ok) "#065F46" else "#92400E"
-    
-    tags$div(
-      class = alert_class,
-      style = paste0("color: ", text_color, "; margin-bottom: 0;"),
-      tags$strong(result$header),
-      tags$span(result$details)
-    )
-  })
-  
 }
 
 shinyApp(ui = ui, server = server)
