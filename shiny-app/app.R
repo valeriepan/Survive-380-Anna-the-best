@@ -181,15 +181,13 @@ ui <- page_sidebar(
         br(),
         withSpinner(plotlyOutput("null_hist", height = "460px"))
       ),
-      
-      
-      
+
       nav_panel(
         "Power curve",
         br(),
         withSpinner(plotlyOutput("power_curve_plot", height = "460px")),
         br(),
-        withSpinner(tableOutput("power_curve_head"))
+        withSpinner(uiOutput("power_curve_head"))
       ),
       
       nav_panel(
