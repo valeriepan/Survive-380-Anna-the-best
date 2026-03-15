@@ -1,6 +1,6 @@
 output$s_obs_ui <- renderUI({
   current_s_obs <- isolate(input$s_obs)
-  default_s_obs <- safe_default_s_obs(input$sample_size, input$p0)
+  default_s_obs <- safe_default_s_obs(input$sample_size, input$p0, input$alternative)
   slider_value <- if (is.null(current_s_obs)) {
     default_s_obs
   } else {
@@ -20,15 +20,19 @@ output$s_obs_ui <- renderUI({
 format_pval_box <- function(x) {
   if (is.na(x)) {
     "NA"
+  } else if (x == 1) {
+    "1.0000"
   } else if (x < 1e-4) {
-    "< 0.0001"
+    formatC(x, format = "e", digits = 2)
   } else {
     sprintf("%.4f", x)
   }
 }
 
 sim_results <- eventReactive(input$run_sim, {
-  req(input$s_obs)
+  req(input$s_obs, input$seed)
+  
+  set.seed(as.integer(input$seed))
   
   pal <- get_palette(input$palette_name)
   alpha_num <- as.numeric(input$alpha)
@@ -95,13 +99,14 @@ sim_results <- eventReactive(input$run_sim, {
     power_curve = power_curve,
     sample_size_curve = sample_size_curve
   )
-}, ignoreInit = FALSE)
+}, ignoreInit = TRUE)
 
 output$summary_boxes <- renderUI({
   res <- sim_results()
   
   pval_est <- format_pval_box(res$pval_out$p_value)
-  pval_se  <- sprintf("%.4f", res$pval_out$mc_se)
+  pval_se  <- format_pval_box(res$pval_out$mc_se)
+  phat_obs <- input$s_obs / input$sample_size
   
   type1_est <- sprintf("%.4f", res$type1_out$type1_hat)
   type1_se  <- sprintf("%.4f", res$type1_out$mc_se)
@@ -118,9 +123,9 @@ output$summary_boxes <- renderUI({
     value_box(
       title = "Monte Carlo p-value",
       value = pval_est,
-      paste("SE:", pval_se),
+      paste("SE: ", pval_se),
       theme = "info"
-    ), 
+    ),
     value_box(
       title = "Power",
       value = power_est,
@@ -149,20 +154,20 @@ output$pvalue_table <- renderTable({
 output$assumption_alert <- renderUI({
   check <- sim_results()$check
   
-  if (check$ok) {
-    div(
-      class = "alert text-white", 
-      style = "background-color: #2C3E50;",
-      tags$strong("Nice! "),
-      check$text
-    )
+  alert_class <- if (check$ok) {
+    "app-alert app-alert-success"
   } else {
-    div(
-      class = "alert alert-warning",
-      tags$strong("Warning! "),
-      check$text
-    )
+    "app-alert app-alert-warning"
   }
+  
+  text_color <- if (check$ok) "#065F46" else "#92400E"
+  
+  tags$div(
+    class = alert_class,
+    style = paste0("color: ", text_color, "; margin-bottom: 0;"),
+    tags$strong(check$header),
+    tags$span(check$details)
+  )
 })
 
 output$power_curve_head <- renderUI({

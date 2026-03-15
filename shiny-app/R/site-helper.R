@@ -83,8 +83,19 @@ pretty_alternative <- function(x) {
   )
 }
 
-safe_default_s_obs <- function(sample_size, p0) {
-  min(round(sample_size * p0), sample_size)
+safe_default_s_obs <- function(sample_size, p0, alternative = "two_sided") {
+  center <- round(sample_size * p0)
+  shift  <- max(1, round(0.10 * sample_size))   # move about 10% away from H0
+  
+  default_val <- switch(
+    alternative,
+    greater   = center + shift,
+    less      = center - shift,
+    two_sided = center + shift,
+    center + shift
+  )
+  
+  max(0, min(sample_size, default_val))
 }
 
 assumption_check <- function(n, p0) {

@@ -78,9 +78,7 @@ sim_inputs <- div(
     ),
     selected = "two_sided"
   ),
-  
-  
-  
+
   selectInput(
     inputId = "palette_name",
     label = "Plot palette",
@@ -88,6 +86,16 @@ sim_inputs <- div(
     selected = "Colorblind Friendly"
   ),
   
+  numericInput(
+    inputId = "seed",
+    label = tooltip(
+      trigger = span("Random seed ", bs_icon("dice-5", class = "text-muted")),
+      "Use the same seed to reproduce exactly the same Monte Carlo results across runs."
+    ),
+    value = 380,
+    min = 1,
+    step = 1
+  ),
   
   actionButton(
     inputId = "run_sim",
