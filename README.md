@@ -41,4 +41,4 @@ remotes::install_github("valeriepan/Survive380AnnaTheBest")
 ---
 
 ## Link to Shiny App:
-https://019cea6f-68fe-92d5-b9e9-6feaeb32de6f.share.connect.posit.cloud
+https://valeriepan-mc-simulation-of-hypothesis-test-for-binomial-prop.share.connect.posit.cloud/
