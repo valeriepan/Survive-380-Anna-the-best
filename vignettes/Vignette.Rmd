@@ -327,6 +327,7 @@ Generative AI was used to debug part of Function_Code and Testing_Code , assist 
 GenAI was used for asking what should be contained in a 'good' roxygen documents and give some examples of roxygen.
 
 Generative AI was used to initiate the shiny app. It was used to help understanding too.
+Final Implementation: Generative AI was used to evaluate Aesthetics and ensure no bugs.
 
 
 ## Bibliography
