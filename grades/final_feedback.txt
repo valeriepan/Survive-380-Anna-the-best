@@ -1,0 +1,13 @@
+Great work!
+
+Quick comment, I didn't point this out earlier:
+
+Technically, this is a bit inaccurate:
+
+True proportion (Ha : p=p1) 
+
+I understand why you did this as it's the true proportion being SIMULATED, but we like to call it the "alternative proportion" anyways out of formality, as in reality we will never actually observe the true parameter value of H_0.
+
+Group grade: 6.4/6.4
+
+Individual grades are private and will be released later when posted on Quercus. Bonus marks, if applicable, are reflected on Quercus instead of feedback here.
